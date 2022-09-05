@@ -1,0 +1,51 @@
+OUTPUT_FORMAT(elf64-x86-64)
+ENTRY(_entry)
+
+VIRTUAL_BASE_ADDRESS = 0xFFFFFFFF80000000;
+
+SECTIONS
+{
+	. = VIRTUAL_BASE_ADDRESS;
+
+    .text ALIGN(4K) :
+	{
+		*(.text*)
+	}
+
+	.ctors ALIGN(4K) :
+	{
+		_ctor_start = .;
+		*(SORT(.ctors*))
+	}
+	_ctor_count = SIZEOF(.ctors) / 8;
+
+	.dtors ALIGN(4K) :
+	{
+		*(SORT(.dtors*))
+		_dtor_end = .;
+	}
+	_dtor_count = SIZEOF(.dtors) / 8;
+
+    .rodata ALIGN(4K) :
+	{
+		*(.rodata*)
+	}
+
+	.data ALIGN(4K) :
+	{
+		*(.data*)
+	}
+
+	.bss ALIGN(4K) :
+	{
+		_bss_start = .;
+		*(.bss*)
+		*(COMMON)
+	}
+	_bss_size = SIZEOF(.bss);
+
+	/DISCARD/ :
+	{
+		*(.comment)
+	}
+}

@@ -1,0 +1,10 @@
+.vscode/
+obj/
+bin/
+*.img
+
+# CMAKE
+CMakeCache.txt
+cmake_install.cmake
+CMakeFiles
+Makefile
