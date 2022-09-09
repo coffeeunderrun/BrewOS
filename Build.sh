@@ -17,11 +17,11 @@ echo Building kernel...
 cmake .
 make
 
-# Make drive image
+# Make drive image (40 MiB, FAT32)
 echo
 echo Building drive image...
-dd if=/dev/zero of=$IMAGE bs=512 count=20480
-mformat -i $IMAGE -f 1440 ::
+dd if=/dev/zero of=$IMAGE bs=512 count=81920
+mformat -i $IMAGE -F ::
 mmd -i $IMAGE ::/EFI
 mmd -i $IMAGE ::/EFI/BOOT
 mcopy -i $IMAGE $BOOT ::/EFI/BOOT

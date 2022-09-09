@@ -16,6 +16,7 @@
 
 [Components]
   ../BrewOSPkg/Library/ElfLib/ElfLib.inf
+  ../BrewOSPkg/Library/MemoryMapLib/MemoryMapLib.inf
   ../BrewOSPkg/Loader/Loader.inf
 
 [LibraryClasses]
@@ -26,6 +27,7 @@
   DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
   ElfLib|../BrewOSPkg/Library/ElfLib/ElfLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  MemoryMapLib|../BrewOSPkg/Library/MemoryMapLib/MemoryMapLib.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf

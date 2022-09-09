@@ -41,7 +41,7 @@ _entry:
 
     ; Only map the pages where the UEFI loader physically loaded the kernel
     ; These page tables are temporary and will be trashed by the kernel
-
+load_page_tables:
     ; PML4 table
     mov rax, p3
     or rax, 0x3             ; Present and writable
@@ -61,14 +61,14 @@ _entry:
     mov [p2], rax
 
     ; Page table index (map physical kernel pages to start of -2 GiB)
-    mov rax, [kernel.top]
+    mov rax, [kernel.top]   ; Start at kernel physical top
     or rax, 0x3             ; Present and writable
-    mov rcx, [kernel.pages]
+    mov rcx, [kernel.pages] ; Loop through each kernel page
     mov rdi, p1
-.loop:
+.next:
     stosq
-    add rax, 0x1000
-    loop .loop
+    add rax, 0x1000 ; Move to next kernel physical page
+    loop .next
 
     ; Point CR3 at the PML4
     mov rdx, p4

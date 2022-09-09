@@ -43,6 +43,7 @@ start:
     mov rdi, [mmap] ; Load memory map pointer
     mov rsi, [acpi] ; Load ACPI table pointer
 
+    ; Set up critical services before calling global constructors
     call KernelInit
 
     ; Call global constructors
@@ -51,26 +52,27 @@ call_global_ctors:
     mov rcx, _ctor_count
     cmp rcx, 0
     je .done
-.loop:
+.next:
     call [rbx]
     add rbx, 8
-    loop .loop
+    loop .next
 .done:
 
     call KernelMain
 
-    ; Call global destructors
+    ; Call global destructors (this isn't really necessary)
 call_global_dtors:
     mov rbx, _dtor_end
     mov rcx, _dtor_count
     cmp rcx, 0
     je .done
-.loop:
+.next:
     sub rbx, 8
     call [rbx]
-    loop .loop
+    loop .next
 .done:
 
+    cli
     hlt
     jmp $
 

@@ -1,27 +1,21 @@
+#include <Common.h>
 #include <elf.h>
-#include <Uefi.h>
 #include <Library/DebugLib.h>
 #include <Library/ElfLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 #include <Protocol/LoadedImage.h>
 #include <Protocol/SimpleFileSystem.h>
 
-#define RETURN_IF_ERROR_STATUS(status)                                      \
-    if (EFI_ERROR(status))                                                  \
-    {                                                                       \
-        DEBUG((DEBUG_ERROR, "%a %d %d\n", __FUNCTION__, __LINE__, status)); \
-        return status;                                                      \
-    }
-
 EFI_STATUS LoadElfHeader(EFI_FILE *file, VOID *header, VOID **entry);
 EFI_STATUS LoadElf32Image(EFI_FILE *file, Elf32_Ehdr *header, VOID **top, UINTN *pages);
 EFI_STATUS LoadElf64Image(EFI_FILE *file, Elf64_Ehdr *header, VOID **top, UINTN *pages);
 
-EFI_STATUS LoadElfImage(CHAR16 *fileName, EFI_HANDLE handle, VOID **entry, VOID **top, UINTN *pages)
+EFI_STATUS LoadElfImage(CHAR16 *fileName, EFI_HANDLE handle, ElfImage *image)
 {
+    ASSERT(image != NULL);
+
     EFI_STATUS status;
 
     EFI_LOADED_IMAGE_PROTOCOL *loadedImage;
@@ -46,20 +40,21 @@ EFI_STATUS LoadElfImage(CHAR16 *fileName, EFI_HANDLE handle, VOID **entry, VOID 
 
     DebugPrint(DEBUG_INFO, "Loading Image: %s\n", fileName);
 
-    status = LoadElfHeader(file, header, entry);
+    status = LoadElfHeader(file, header, &image->entry);
     RETURN_IF_ERROR_STATUS(status);
 
     if (((Elf64_Ehdr *)header)->e_ident[EI_CLASS] == ELFCLASS64)
     {
-        status = LoadElf64Image(file, header, top, pages);
+        status = LoadElf64Image(file, header, &image->top, &image->pages);
     }
     else
     {
-        status = LoadElf32Image(file, header, top, pages);
+        status = LoadElf32Image(file, header, &image->top, &image->pages);
     }
     RETURN_IF_ERROR_STATUS(status);
 
-    DebugPrint(DEBUG_INFO, "Entry Point: %p, Top: %p, Pages: %d\n\n", *entry, *top, *pages);
+    DebugPrint(DEBUG_INFO, "Entry Point: %p, Top: %p, Pages: %d\n\n",
+               image->entry, image->top, image->pages);
 
     FreePool(header);
 
