@@ -23,5 +23,4 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-s")
 
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-add_subdirectory(loader)
 add_subdirectory(kernel)

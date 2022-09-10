@@ -1,6 +1,5 @@
 STARTUP=BrewOSPkg/Loader/startup.nsh
-BOOT=edk2/Build/BrewOS/DEBUG_GCC5/X64/Loader.efi
-LOADER=bin/loader.elf
+LOADER=edk2/Build/BrewOS/DEBUG_GCC5/X64/Loader.efi
 KERNEL=bin/kernel.elf
 IMAGE=brewos.img
 
@@ -24,7 +23,6 @@ dd if=/dev/zero of=$IMAGE bs=512 count=81920
 mformat -i $IMAGE -F ::
 mmd -i $IMAGE ::/EFI
 mmd -i $IMAGE ::/EFI/BOOT
-mcopy -i $IMAGE $BOOT ::/EFI/BOOT
-mcopy -i $IMAGE $LOADER ::
+mcopy -i $IMAGE $LOADER ::/EFI/BOOT
 mcopy -i $IMAGE $KERNEL ::
 mcopy -i $IMAGE $STARTUP ::

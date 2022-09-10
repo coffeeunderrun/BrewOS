@@ -15,14 +15,14 @@ namespace BrewOS::Memory
         uint64_t attributes;
     } MemoryMapEntry;
 
-    typedef struct MemoryMapInfo
+    typedef struct MemoryMap
     {
         MemoryMapEntry *map;
         uint64_t mapSize;
         uint64_t mapKey;
         uint64_t descriptorSize;
         uint32_t descriptorVersion;
-    } MemoryMapInfo;
+    } MemoryMap;
 }
 
 #endif // BREWOS_MEMORY_H

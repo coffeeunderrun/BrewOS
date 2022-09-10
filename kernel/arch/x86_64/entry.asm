@@ -1,7 +1,11 @@
-extern _bss_start, _bss_size, _ctor_start, _ctor_count, _dtor_end, _dtor_count
-extern KernelInit, KernelMain
+extern _trampoline
 
 bits 64
+
+p4 equ 0x8000 ; Temporary PML4
+p3 equ 0x9000 ; Temporary PDP
+p2 equ 0xA000 ; Temporary PDI
+p1 equ 0xB000 ; Temporary PTI (first of multiple tables; count based on kernel pages)
 
 section .text
 
@@ -10,94 +14,72 @@ _entry:
     cli ; No interrupts
     cld ; Index registers increment
 
-    mov [mmap], rdi ; Save memory map pointer
-    mov [acpi], rsi ; Save ACPI table pointer
+    ; Using System V AMD64 ABI calling convention
+    ; https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI
+    ; Check parameters passed from the UEFI loader before trashing registers
 
-    lgdt [gdt.ptr] ; Load GDT register
+    mov [_ktop], rdi   ; Save kernel top physical adress
+    mov [_kpages], rsi ; Save kernel page count
+    mov [_mmap], rdx   ; Save memory map pointer
 
-    ; Reload GDT data descriptor
-    mov ax, gdt.kData
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
-
-    ; Reload GDT code descriptor
-    push gdt.kCode
-    lea rax, [start]
-    push rax
-    retfq
-
-start:
-    ; Set up new stack
-    mov rsp, kStackTop
-
-    ; Zero-out BSS section
+    ; Zero out level 4, 3, and 2 page tables
     xor rax, rax
-    mov rcx, _bss_size
-    mov rdi, _bss_start
-    rep stosb
+    mov rcx, 512 * 3
+    mov rdi, p4
+    rep stosq
 
-    ; Pass parameters to kernel
-    mov rdi, [mmap] ; Load memory map pointer
-    mov rsi, [acpi] ; Load ACPI table pointer
+    ; Zero out level 1 page tables
+    mov rcx, [_kpages]
+    imul rcx, 512
+    mov rdi, p1
+    rep stosq
 
-    ; Set up critical services before calling global constructors
-    call KernelInit
+    ; Only map the pages where the UEFI loader physically loaded the kernel
+    ; These page tables are temporary and will be trashed by the kernel
+load_page_tables:
+    ; PML4 table
+    mov rax, p3
+    or rax, 0x3             ; Present and writable
+    mov [p4], rax           ; Identity map first 512 GiB
+    mov [p4 + 511 * 8], rax ; Map last 512 GiB to first 512 GiB
 
-    ; Call global constructors
-call_global_ctors:
-    mov rbx, _ctor_start
-    mov rcx, _ctor_count
-    cmp rcx, 0
-    je .done
+    ; Page directory pointer table
+    mov rax, 0x83           ; Present, writable, and 1 GiB pages
+    mov [p3], rax           ; Identity map first 1 GiB
+    mov rax, p2
+    or rax, 0x3             ; Present, writable, and 2 MiB pages
+    mov [p3 + 510 * 8], rax ; Map second to last 1 GiB to PDI table
+
+    ; Page directory index (-2 GiB)
+    mov rax, p1
+    or rax, 0x3 ; Present, writable, and 4 KiB pages
+    mov [p2], rax
+
+    ; Page table index (map physical kernel pages to start of -2 GiB)
+    mov rax, [_ktop]   ; Start at kernel physical top
+    or rax, 0x3        ; Present and writable
+    mov rcx, [_kpages] ; Loop through each kernel page
+    mov rdi, p1
 .next:
-    call [rbx]
-    add rbx, 8
+    stosq
+    add rax, 0x1000 ; Move to next kernel physical page
     loop .next
-.done:
 
-    call KernelMain
+    ; Point CR3 at PML4 table
+    mov rax, p4
+    mov cr3, rax
 
-    ; Call global destructors (this isn't really necessary)
-call_global_dtors:
-    mov rbx, _dtor_end
-    mov rcx, _dtor_count
-    cmp rcx, 0
-    je .done
-.next:
-    sub rbx, 8
-    call [rbx]
-    loop .next
-.done:
-
-    cli
-    hlt
-    jmp $
-
-section .rodata
-
-align 8
-gdt:
-.null:  dq 0
-.kCode: equ $ - gdt
-        dq 0x00209A0000000000 ; Kernel 64-bit code segment RWX
-.kData: equ $ - gdt
-        dq 0x0000920000000000 ; Kernel 64-bit data segment RW
-.uCode: equ $ - gdt
-        dq 0x0020FA0000000000 ; User 64-bit code segment RWX
-.uData: equ $ - gdt
-        dq 0x0000F20000000000 ; User 64-bit data segment RW
-.ptr:   dw $ - gdt - 1
-        dq gdt
+    ; Jump to higher-half virtual address space
+    lea rax, _trampoline
+    jmp rax
 
 section .data
 
-acpi: dq 0
-mmap: dq 0
+global _mmap
+_mmap: dq 0
 
-section .bss
+global _ktop
+_ktop: dq 0
 
-resb 0x2000
-kStackTop:
+global _kpages
+_kpages: dq 0

@@ -5,7 +5,25 @@ VIRTUAL_BASE_ADDRESS = 0xFFFFFFFF80000000;
 
 SECTIONS
 {
-	. = VIRTUAL_BASE_ADDRESS;
+	/*
+	 * Lower-half 
+	 */
+
+    .entry.text ALIGN(4K) :
+	{
+		*entry*(.text*)
+	}
+
+    .entry.data ALIGN(4K) :
+	{
+		*entry*(.data*)
+	}
+
+	/*
+	 * Higher-half
+	 */
+
+	. += VIRTUAL_BASE_ADDRESS;
 
     .text ALIGN(4K) :
 	{
