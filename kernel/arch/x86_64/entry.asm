@@ -21,6 +21,7 @@ _entry:
     mov [_ktop], rdi   ; Save kernel top physical adress
     mov [_kpages], rsi ; Save kernel page count
     mov [_mmap], rdx   ; Save memory map pointer
+    mov [_gfxo], rcx   ; Save graphics output pointer
 
     ; Zero out level 4, 3, and 2 page tables
     xor rax, rax
@@ -46,6 +47,10 @@ load_page_tables:
     ; Page directory pointer table
     mov rax, 0x83           ; Present, writable, and 1 GiB pages
     mov [p3], rax           ; Identity map first 1 GiB
+    add rax, 0x40000000
+    mov [p3 + 1 * 8], rax   ; Identity map second 1 GiB
+    add rax, 0x40000000
+    mov [p3 + 2 * 8], rax   ; Identity map third 1 GiB
     mov rax, p2
     or rax, 0x3             ; Present, writable, and 2 MiB pages
     mov [p3 + 510 * 8], rax ; Map second to last 1 GiB to PDI table
@@ -75,11 +80,14 @@ load_page_tables:
 
 section .data
 
-global _mmap
-_mmap: dq 0
-
 global _ktop
 _ktop: dq 0
 
 global _kpages
 _kpages: dq 0
+
+global _mmap
+_mmap: dq 0
+
+global _gfxo
+_gfxo: dq 0

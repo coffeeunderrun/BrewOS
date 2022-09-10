@@ -18,6 +18,7 @@
   BaseMemoryLib
   DebugLib
   ElfLib
+  GraphicsOutputLib
   MemoryAllocationLib
   MemoryMapLib
   PrintLib

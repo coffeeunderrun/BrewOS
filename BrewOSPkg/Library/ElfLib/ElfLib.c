@@ -38,7 +38,7 @@ EFI_STATUS LoadElfImage(CHAR16 *fileName, EFI_HANDLE handle, ElfImage *image)
     status = gBS->AllocatePool(EfiLoaderData, sizeof(Elf64_Ehdr), (VOID **)&header);
     RETURN_IF_ERROR_STATUS(status);
 
-    DebugPrint(DEBUG_INFO, "Loading Image: %s\n", fileName);
+    DebugPrint(DEBUG_INFO, "\nLoading Image: %s\n", fileName);
 
     status = LoadElfHeader(file, header, &image->entry);
     RETURN_IF_ERROR_STATUS(status);
@@ -53,8 +53,8 @@ EFI_STATUS LoadElfImage(CHAR16 *fileName, EFI_HANDLE handle, ElfImage *image)
     }
     RETURN_IF_ERROR_STATUS(status);
 
-    DebugPrint(DEBUG_INFO, "Entry Point: %p, Top: %p, Pages: %d\n\n",
-               image->entry, image->top, image->pages);
+    DebugPrint(DEBUG_INFO, "\n%11s: %16p\n%11s: %16p\n%11s:%3d\n",
+               L"Entry Point", image->entry, L"Top", image->top, L"Pages", image->pages);
 
     FreePool(header);
 
@@ -186,7 +186,7 @@ EFI_STATUS LoadElf64Image(EFI_FILE *file, Elf64_Ehdr *header, VOID **top, UINTN 
             continue;
         }
 
-        DebugPrint(DEBUG_INFO, "Type: %d, VAddr: %p, Align: %d, FSize: %d, MSize: %d\n",
+        DebugPrint(DEBUG_INFO, "Type:%2d, Addr: %16p, Align:%5d, FSize:%6d, MSize:%6d\n",
                    programHeader.p_type, programHeader.p_vaddr, programHeader.p_align, programHeader.p_filesz, programHeader.p_memsz);
 
         status = file->SetPosition(file, programHeader.p_offset);

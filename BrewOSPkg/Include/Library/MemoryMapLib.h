@@ -1,5 +1,5 @@
-#ifndef MEMORYMAPLIB_H
-#define MEMORYMAPLIB_H
+#ifndef MEMORY_MAP_LIB_H
+#define MEMORY_MAP_LIB_H
 
 #include <Uefi.h>
 
@@ -14,4 +14,4 @@ typedef struct MemoryMap
 
 EFI_STATUS GetMemoryMap(MemoryMap *memoryMap);
 
-#endif // MEMORYMAPLIB_H
+#endif // MEMORY_MAP_LIB_H

@@ -1,5 +1,5 @@
 extern _bss_start, _bss_size, _ctor_start, _ctor_count, _dtor_end, _dtor_count
-extern _ktop, _kpages, _mmap
+extern _ktop, _kpages, _mmap, _gfxo
 extern KernelInit, KernelMain
 
 bits 64
@@ -39,6 +39,7 @@ start:
     mov rdi, [_ktop]   ; Kernel top physical address
     mov rsi, [_kpages] ; Kernel page count
     mov rdx, [_mmap]   ; Memory map pointer
+    mov rcx, [_gfxo]   ; Graphics output pointer
 
     ; Set up critical services before calling global constructors
     call KernelInit

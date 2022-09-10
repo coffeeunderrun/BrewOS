@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-ffreestanding -fbuiltin -fno-stack-protector -fno-exceptio
 file(GLOB_RECURSE ASM_SOURCES "arch/${CMAKE_SYSTEM_PROCESSOR}/*.asm")
 file(GLOB_RECURSE CXX_SOURCES "arch/${CMAKE_SYSTEM_PROCESSOR}/*.cpp" "*.cpp")
 
-include_directories("include")
+include_directories("include" "include/${CMAKE_SYSTEM_PROCESSOR}")
 
 add_executable(kernel.elf ${ASM_SOURCES} ${CXX_SOURCES})
 

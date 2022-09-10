@@ -2,15 +2,21 @@
 #include <Uefi.h>
 #include <Library/DebugLib.h>
 #include <Library/ElfLib.h>
+#include <Library/GraphicsOutputLib.h>
 #include <Library/MemoryMapLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 
-typedef __attribute__((sysv_abi)) VOID *EntryPoint(VOID *, UINTN, MemoryMap *);
+typedef __attribute__((sysv_abi)) VOID *EntryPoint(VOID *, UINTN, MemoryMap *, GraphicsOutput *);
 
 EFI_STATUS EFIAPI UefiEntry(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTable)
 {
     EFI_STATUS status;
+
+    // Get GOP frame buffer
+    GraphicsOutput graphicsOutput;
+    status = GetGraphicsOutput(&graphicsOutput, imageHandle, 800, 600);
+    RETURN_IF_ERROR_STATUS(status);
 
     // Load kernel image into memory wherever UEFI sees fit
     ElfImage kernel;
@@ -34,7 +40,7 @@ EFI_STATUS EFIAPI UefiEntry(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTabl
     EntryPoint *KernelEntry = (EntryPoint *)((UINTN)kernel.top + (UINTN)kernel.entry);
 
     // Jump to kernel
-    KernelEntry(kernel.top, kernel.pages, &memoryMap);
+    KernelEntry(kernel.top, kernel.pages, &memoryMap, &graphicsOutput);
 
     // Kernel does not return so this point should never be reached
     return status;
