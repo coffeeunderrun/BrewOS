@@ -6,7 +6,7 @@
 typedef struct ElfImage
 {
     VOID *entry;
-    VOID *top;
+    VOID *start;
     UINTN pages;
 } ElfImage;
 

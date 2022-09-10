@@ -1,5 +1,8 @@
 #include <graphics.hpp>
 
+/*** DO NOT USE THIS AFTER INITIALIZATION ***/
+extern const BrewOS::Graphics::GraphicsOutput *_graphics_output;
+
 namespace BrewOS::Graphics
 {
     static GraphicsMode s_mode;
@@ -10,11 +13,11 @@ namespace BrewOS::Graphics
 
     static uint32_t s_pixelWidth, s_pitch;
 
-    void Initialize(const GraphicsOutput *graphicsOutput)
+    void Initialize()
     {
-        s_mode = graphicsOutput->mode;
-        s_frameBuffer = graphicsOutput->frameBuffer;
-        s_frameBufferSize = graphicsOutput->frameBufferSize;
+        s_mode = _graphics_output->mode;
+        s_frameBuffer = _graphics_output->frameBuffer;
+        s_frameBufferSize = _graphics_output->frameBufferSize;
         s_pixelWidth = 4;
         s_pitch = s_mode.pixelsPerScanLine * s_pixelWidth;
     }

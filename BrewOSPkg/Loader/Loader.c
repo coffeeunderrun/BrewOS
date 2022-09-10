@@ -37,10 +37,10 @@ EFI_STATUS EFIAPI UefiEntry(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTabl
     RETURN_IF_ERROR_STATUS(status);
 
     // Recalculate kernel entry based on location in memory
-    EntryPoint *KernelEntry = (EntryPoint *)((UINTN)kernel.top + (UINTN)kernel.entry);
+    EntryPoint *KernelEntry = (EntryPoint *)((UINTN)kernel.start + (UINTN)kernel.entry);
 
     // Jump to kernel
-    KernelEntry(kernel.top, kernel.pages, &memoryMap, &graphicsOutput);
+    KernelEntry(kernel.start, kernel.pages, &memoryMap, &graphicsOutput);
 
     // Kernel does not return so this point should never be reached
     return status;

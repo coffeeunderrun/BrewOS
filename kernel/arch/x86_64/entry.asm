@@ -18,10 +18,11 @@ _entry:
     ; https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI
     ; Check parameters passed from the UEFI loader before trashing registers
 
-    mov [_ktop], rdi   ; Save kernel top physical adress
-    mov [_kpages], rsi ; Save kernel page count
-    mov [_mmap], rdx   ; Save memory map pointer
-    mov [_gfxo], rcx   ; Save graphics output pointer
+    ; Save arguments passed from UEFI
+    mov [_kernel_start], rdi    ; Kernel top physical adress
+    mov [_kernel_pages], rsi    ; Kernel page count
+    mov [_memory_map], rdx      ; Memory map pointer
+    mov [_graphics_output], rcx ; Graphics output pointer
 
     ; Zero out level 4, 3, and 2 page tables
     xor rax, rax
@@ -30,7 +31,7 @@ _entry:
     rep stosq
 
     ; Zero out level 1 page tables
-    mov rcx, [_kpages]
+    mov rcx, [_kernel_pages]
     imul rcx, 512
     mov rdi, p1
     rep stosq
@@ -61,9 +62,9 @@ load_page_tables:
     mov [p2], rax
 
     ; Page table index (map physical kernel pages to start of -2 GiB)
-    mov rax, [_ktop]   ; Start at kernel physical top
-    or rax, 0x3        ; Present and writable
-    mov rcx, [_kpages] ; Loop through each kernel page
+    mov rax, [_kernel_start] ; Start at kernel physical top
+    or rax, 0x3              ; Present and writable
+    mov rcx, [_kernel_pages] ; Loop through each kernel page
     mov rdi, p1
 .next:
     stosq
@@ -80,14 +81,14 @@ load_page_tables:
 
 section .data
 
-global _ktop
-_ktop: dq 0
+global _kernel_start
+_kernel_start: dq 0
 
-global _kpages
-_kpages: dq 0
+global _kernel_pages
+_kernel_pages: dq 0
 
-global _mmap
-_mmap: dq 0
+global _memory_map
+_memory_map: dq 0
 
-global _gfxo
-_gfxo: dq 0
+global _graphics_output
+_graphics_output: dq 0

@@ -39,7 +39,7 @@ namespace BrewOS::Graphics
         GraphicsMode mode;
     } GraphicsOutput;
 
-    void Initialize(const GraphicsOutput *graphicsOutput);
+    void Initialize();
 
     void ClearScreen(const uint32_t color);
 

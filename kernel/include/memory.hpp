@@ -23,6 +23,8 @@ namespace BrewOS::Memory
         uint64_t descriptorSize;
         uint32_t descriptorVersion;
     } MemoryMap;
+
+    void Initialize();
 }
 
 #endif // BREWOS_MEMORY_H

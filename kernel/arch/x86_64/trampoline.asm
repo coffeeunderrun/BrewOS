@@ -1,5 +1,4 @@
 extern _bss_start, _bss_size, _ctor_start, _ctor_count, _dtor_end, _dtor_count
-extern _ktop, _kpages, _mmap, _gfxo
 extern KernelInit, KernelMain
 
 bits 64
@@ -9,10 +8,10 @@ section .text
 global _trampoline
 _trampoline:
     ; UEFI provides a GDT but we want our own
-    lgdt [gdt.ptr]
+    lgdt [gdt.pointer]
 
     ; Update data segments
-    mov ax, gdt.kData
+    mov ax, gdt.kernel_data
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -20,26 +19,20 @@ _trampoline:
     mov ss, ax
 
     ; Update code segment
-    push gdt.kCode
+    push gdt.kernel_code
     lea rax, [start]
     push rax
     retfq
 
 start:
     ; Set up new stack
-    mov rsp, kStackTop
+    mov rsp, stack_top
 
     ; Zero-out BSS section
     xor rax, rax
     mov rcx, _bss_size
     mov rdi, _bss_start
     rep stosb
-
-    ; Pass parameters to kernel
-    mov rdi, [_ktop]   ; Kernel top physical address
-    mov rsi, [_kpages] ; Kernel page count
-    mov rdx, [_mmap]   ; Memory map pointer
-    mov rcx, [_gfxo]   ; Graphics output pointer
 
     ; Set up critical services before calling global constructors
     call KernelInit
@@ -78,19 +71,21 @@ section .rodata
 
 align 8
 gdt:
-.null:  dq 0
-.kCode: equ $ - gdt
-        dq 0x00209A0000000000 ; Kernel 64-bit code segment RWX
-.kData: equ $ - gdt
-        dq 0x0000920000000000 ; Kernel 64-bit data segment RW
-.uCode: equ $ - gdt
-        dq 0x0020FA0000000000 ; User 64-bit code segment RWX
-.uData: equ $ - gdt
-        dq 0x0000F20000000000 ; User 64-bit data segment RW
-.ptr:   dw $ - gdt - 1
-        dq gdt
+.null:
+    dq 0
+.kernel_code: equ $ - gdt
+    dq 0x00209A0000000000 ; Kernel 64-bit code segment RWX
+.kernel_data: equ $ - gdt
+    dq 0x0000920000000000 ; Kernel 64-bit data segment RW
+.user_code:   equ $ - gdt
+    dq 0x0020FA0000000000 ; User 64-bit code segment RWX
+.user_data:   equ $ - gdt
+    dq 0x0000F20000000000 ; User 64-bit data segment RW
+.pointer:
+    dw $ - gdt - 1
+    dq gdt
 
 section .bss
 
 resb 0x8000
-kStackTop:
+stack_top:

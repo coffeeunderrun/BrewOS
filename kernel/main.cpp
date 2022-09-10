@@ -6,9 +6,12 @@ using BrewOS::Memory::MemoryMap;
 
 namespace BrewOS
 {
-    extern "C" void KernelInit(void *kernelTop, uint64_t kernelPages, MemoryMap *memoryMap, GraphicsOutput *graphicsOutput)
+    extern "C" void KernelInit()
     {
-        Graphics::Initialize(graphicsOutput);
+        Graphics::Initialize();
+
+        // Make sure this is done last as data in lower-half from UEFI will be lost
+        Memory::Initialize();
     }
 
     extern "C" void KernelMain()

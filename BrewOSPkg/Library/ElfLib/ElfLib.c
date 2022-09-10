@@ -9,8 +9,8 @@
 #include <Protocol/SimpleFileSystem.h>
 
 EFI_STATUS LoadElfHeader(EFI_FILE *file, VOID *header, VOID **entry);
-EFI_STATUS LoadElf32Image(EFI_FILE *file, Elf32_Ehdr *header, VOID **top, UINTN *pages);
-EFI_STATUS LoadElf64Image(EFI_FILE *file, Elf64_Ehdr *header, VOID **top, UINTN *pages);
+EFI_STATUS LoadElf32Image(EFI_FILE *file, Elf32_Ehdr *header, VOID **start, UINTN *pages);
+EFI_STATUS LoadElf64Image(EFI_FILE *file, Elf64_Ehdr *header, VOID **start, UINTN *pages);
 
 EFI_STATUS LoadElfImage(CHAR16 *fileName, EFI_HANDLE handle, ElfImage *image)
 {
@@ -45,16 +45,16 @@ EFI_STATUS LoadElfImage(CHAR16 *fileName, EFI_HANDLE handle, ElfImage *image)
 
     if (((Elf64_Ehdr *)header)->e_ident[EI_CLASS] == ELFCLASS64)
     {
-        status = LoadElf64Image(file, header, &image->top, &image->pages);
+        status = LoadElf64Image(file, header, &image->start, &image->pages);
     }
     else
     {
-        status = LoadElf32Image(file, header, &image->top, &image->pages);
+        status = LoadElf32Image(file, header, &image->start, &image->pages);
     }
     RETURN_IF_ERROR_STATUS(status);
 
     DebugPrint(DEBUG_INFO, "\n%11s: %16p\n%11s: %16p\n%11s:%3d\n",
-               L"Entry Point", image->entry, L"Top", image->top, L"Pages", image->pages);
+               L"Entry Point", image->entry, L"Start", image->start, L"Pages", image->pages);
 
     FreePool(header);
 
@@ -124,13 +124,13 @@ EFI_STATUS LoadElfHeader(EFI_FILE *file, VOID *header, VOID **entry)
     return RETURN_LOAD_ERROR;
 }
 
-EFI_STATUS LoadElf32Image(EFI_FILE *file, Elf32_Ehdr *header, VOID **top, UINTN *pages)
+EFI_STATUS LoadElf32Image(EFI_FILE *file, Elf32_Ehdr *header, VOID **start, UINTN *pages)
 {
     DEBUG((DEBUG_ERROR, "%a %d Not implemented yet.\n", __FUNCTION__, __LINE__));
     return EFI_UNSUPPORTED;
 }
 
-EFI_STATUS LoadElf64Image(EFI_FILE *file, Elf64_Ehdr *header, VOID **top, UINTN *pages)
+EFI_STATUS LoadElf64Image(EFI_FILE *file, Elf64_Ehdr *header, VOID **start, UINTN *pages)
 {
     ASSERT(file != NULL);
     ASSERT(header != NULL);
@@ -199,7 +199,7 @@ EFI_STATUS LoadElf64Image(EFI_FILE *file, Elf64_Ehdr *header, VOID **top, UINTN 
         pBuffer += programHeader.p_memsz;
     }
 
-    *top = buffer;
+    *start = buffer;
 
     FreePool(programHeaders);
 
