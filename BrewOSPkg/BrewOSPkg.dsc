@@ -18,6 +18,7 @@
   ../BrewOSPkg/Library/ElfLib/ElfLib.inf
   ../BrewOSPkg/Library/GraphicsOutputLib/GraphicsOutputLib.inf
   ../BrewOSPkg/Library/MemoryMapLib/MemoryMapLib.inf
+  ../BrewOSPkg/Library/PsfFontLib/PsfFontLib.inf
   ../BrewOSPkg/Loader/Loader.inf
 
 [LibraryClasses]
@@ -32,6 +33,7 @@
   MemoryMapLib|../BrewOSPkg/Library/MemoryMapLib/MemoryMapLib.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
+  PsfFontLib|../BrewOSPkg/Library/PsfFontLib/PsfFontLib.inf
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
   UefiBootServicesTableLib|MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf

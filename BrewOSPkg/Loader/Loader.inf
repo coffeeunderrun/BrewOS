@@ -22,5 +22,6 @@
   MemoryAllocationLib
   MemoryMapLib
   PrintLib
+  PsfFontLib
   UefiLib
   UefiApplicationEntryPoint

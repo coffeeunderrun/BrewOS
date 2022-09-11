@@ -1,9 +1,6 @@
 #include <graphics.hpp>
 #include <memory.hpp>
 
-using BrewOS::Graphics::GraphicsOutput;
-using BrewOS::Memory::MemoryMap;
-
 namespace BrewOS
 {
     extern "C" void KernelInit()
@@ -17,5 +14,6 @@ namespace BrewOS
     extern "C" void KernelMain()
     {
         Graphics::ClearScreen(0x6495ED);
+        Graphics::DrawText(L"Welcome to BrewOS!", 0, 0, 0xFFFFFF);
     }
 }

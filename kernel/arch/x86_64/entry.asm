@@ -23,6 +23,7 @@ _entry:
     mov [_kernel_pages], rsi    ; Kernel page count
     mov [_memory_map], rdx      ; Memory map pointer
     mov [_graphics_output], rcx ; Graphics output pointer
+    mov [_font], r8             ; Font
 
     ; Zero out level 4, 3, and 2 page tables
     xor rax, rax
@@ -92,3 +93,6 @@ _memory_map: dq 0
 
 global _graphics_output
 _graphics_output: dq 0
+
+global _font
+_font: dq 0

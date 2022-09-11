@@ -4,10 +4,11 @@
 #include <Library/ElfLib.h>
 #include <Library/GraphicsOutputLib.h>
 #include <Library/MemoryMapLib.h>
+#include <Library/PsfFontLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 
-typedef __attribute__((sysv_abi)) VOID *EntryPoint(VOID *, UINTN, MemoryMap *, GraphicsOutput *);
+typedef __attribute__((sysv_abi)) VOID *EntryPoint(VOID *, UINTN, MemoryMap *, GraphicsOutput *, PsfImage *);
 
 EFI_STATUS EFIAPI UefiEntry(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTable)
 {
@@ -17,6 +18,15 @@ EFI_STATUS EFIAPI UefiEntry(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTabl
     GraphicsOutput graphicsOutput;
     status = GetGraphicsOutput(&graphicsOutput, imageHandle, 800, 600);
     RETURN_IF_ERROR_STATUS(status);
+
+    // Load font image
+    PsfImage font;
+    status = LoadPsfImage(L"zap-light20.psf", imageHandle, &font);
+    if (EFI_ERROR(status))
+    {
+        Print(L"Unable to load FONT.\n");
+        return status;
+    }
 
     // Load kernel image into memory wherever UEFI sees fit
     ElfImage kernel;
@@ -40,7 +50,7 @@ EFI_STATUS EFIAPI UefiEntry(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTabl
     EntryPoint *KernelEntry = (EntryPoint *)((UINTN)kernel.start + (UINTN)kernel.entry);
 
     // Jump to kernel
-    KernelEntry(kernel.start, kernel.pages, &memoryMap, &graphicsOutput);
+    KernelEntry(kernel.start, kernel.pages, &memoryMap, &graphicsOutput, &font);
 
     // Kernel does not return so this point should never be reached
     return status;

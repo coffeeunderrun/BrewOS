@@ -2,6 +2,7 @@ STARTUP=BrewOSPkg/Loader/startup.nsh
 LOADER=edk2/Build/BrewOS/DEBUG_GCC5/X64/Loader.efi
 KERNEL=bin/kernel.elf
 IMAGE=brewos.img
+FONT=zap-light20.psf
 
 # Build UEFI boot loader
 echo Building boot loader...
@@ -24,5 +25,6 @@ mformat -i $IMAGE -F ::
 mmd -i $IMAGE ::/EFI
 mmd -i $IMAGE ::/EFI/BOOT
 mcopy -i $IMAGE $LOADER ::/EFI/BOOT
-mcopy -i $IMAGE $KERNEL ::
 mcopy -i $IMAGE $STARTUP ::
+mcopy -i $IMAGE $KERNEL ::
+mcopy -i $IMAGE $FONT ::
