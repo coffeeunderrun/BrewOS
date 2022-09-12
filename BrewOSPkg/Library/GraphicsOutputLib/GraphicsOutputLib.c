@@ -24,12 +24,12 @@ EFI_STATUS GetGraphicsOutput(GraphicsOutput *graphicsOutput, EFI_HANDLE handle, 
 
     UINTN infoSize, mode;
     EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *info;
-    for (mode = 0; mode <= gop->Mode->MaxMode; mode++)
+    for (mode = gop->Mode->MaxMode - 1; mode > 0; mode--)
     {
         status = gop->QueryMode(gop, mode, &infoSize, &info);
         RETURN_IF_ERROR_STATUS(status);
 
-        if (info->HorizontalResolution >= desiredWidth && info->VerticalResolution >= desiredHeight)
+        if (info->HorizontalResolution <= desiredWidth && info->VerticalResolution <= desiredHeight)
         {
             break;
         }

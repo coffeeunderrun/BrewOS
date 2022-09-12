@@ -19,9 +19,11 @@ EFI_STATUS EFIAPI UefiEntry(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTabl
     status = GetGraphicsOutput(&graphicsOutput, imageHandle, 800, 600);
     RETURN_IF_ERROR_STATUS(status);
 
+    CHAR16 *fontFileName = graphicsOutput.modeInfo.HorizontalResolution < 800 ? L"assets\\ter-116b.psf" : L"assets\\ter-120b.psf";
+
     // Load font image
     PsfImage font;
-    status = LoadPsfImage(L"zap-light20.psf", imageHandle, &font);
+    status = LoadPsfImage(fontFileName, imageHandle, &font);
     if (EFI_ERROR(status))
     {
         Print(L"Unable to load FONT.\n");

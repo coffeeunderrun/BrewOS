@@ -5,65 +5,65 @@ VIRTUAL_BASE_ADDRESS = 0xFFFFFFFF80000000;
 
 SECTIONS
 {
-	/*
-	 * Lower-half 
-	 */
+    /*
+     * Lower-half 
+     */
 
     .entry.text ALIGN(4K) :
-	{
-		*entry*(.text*)
-	}
+    {
+        *entry*(.text*)
+    }
 
     .entry.data ALIGN(4K) :
-	{
-		*entry*(.data*)
-	}
+    {
+        *entry*(.data*)
+    }
 
-	/*
-	 * Higher-half
-	 */
+    /*
+     * Higher-half
+     */
 
-	. += VIRTUAL_BASE_ADDRESS;
+    . += VIRTUAL_BASE_ADDRESS;
 
     .text ALIGN(4K) :
-	{
-		*(.text*)
-	}
+    {
+        *(.text*)
+    }
 
-	.ctors ALIGN(4K) :
-	{
-		_ctor_start = .;
-		*(SORT(.ctors*))
-	}
-	_ctor_count = SIZEOF(.ctors) / 8;
+    .ctors ALIGN(4K) :
+    {
+        _ctor_start = .;
+        *(SORT(.ctors*))
+    }
+    _ctor_count = SIZEOF(.ctors) / 8;
 
-	.dtors ALIGN(4K) :
-	{
-		*(SORT(.dtors*))
-		_dtor_end = .;
-	}
-	_dtor_count = SIZEOF(.dtors) / 8;
+    .dtors ALIGN(4K) :
+    {
+        *(SORT(.dtors*))
+        _dtor_end = .;
+    }
+    _dtor_count = SIZEOF(.dtors) / 8;
 
     .rodata ALIGN(4K) :
-	{
-		*(.rodata*)
-	}
+    {
+        *(.rodata*)
+    }
 
-	.data ALIGN(4K) :
-	{
-		*(.data*)
-	}
+    .data ALIGN(4K) :
+    {
+        *(.data*)
+    }
 
-	.bss ALIGN(4K) :
-	{
-		_bss_start = .;
-		*(.bss*)
-		*(COMMON)
-	}
-	_bss_size = SIZEOF(.bss);
+    .bss ALIGN(4K) :
+    {
+        _bss_start = .;
+        *(.bss*)
+        *(COMMON)
+    }
+    _bss_size = SIZEOF(.bss);
 
-	/DISCARD/ :
-	{
-		*(.comment)
-	}
+    /DISCARD/ :
+    {
+        *(.comment)
+    }
 }
