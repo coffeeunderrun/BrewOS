@@ -1,8 +1,7 @@
-#include <graphics.hpp>
+#include <graphics/graphics.hpp>
 
-/*** DO NOT USE THESE AFTER INITIALIZATION ***/
+/*** DO NOT USE THIS AFTER INITIALIZATION ***/
 extern const BrewOS::Graphics::GraphicsOutput *_graphics_output;
-extern const BrewOS::Graphics::Psf *_font;
 
 namespace BrewOS::Graphics
 {
@@ -12,6 +11,8 @@ namespace BrewOS::Graphics
     static uint64_t s_frameBufferSize; // Size of frame buffer in bytes
     static uint32_t s_pixelWidth;      // Width of pixel in bytes
     static uint32_t s_pitch;           // Width of scanline in bytes
+
+    static void DrawChar(const wchar_t c, const uint32_t x, const uint32_t y, const Color color, const PsfFont font);
 
     void Initialize()
     {
@@ -24,26 +25,46 @@ namespace BrewOS::Graphics
         s_pitch = s_mode.pixelsPerScanLine * s_pixelWidth;
     }
 
-    void ClearScreen(const uint32_t color)
+    void ClearScreen(const Color color)
     {
         for (uint8_t *where = s_frameBuffer; where < s_frameBuffer + s_frameBufferSize; where += s_pixelWidth)
         {
-            *(uint32_t *)where = color;
+            *reinterpret_cast<Color *>(where) = color;
         }
     }
 
-    void DrawPoint(const uint32_t x, const uint32_t y, const uint32_t color)
+    void DrawPoint(const uint32_t x, const uint32_t y, const Color color)
     {
-        *(uint32_t *)(s_frameBuffer + x * s_pixelWidth + y * s_pitch) = color;
+        *reinterpret_cast<Color *>(s_frameBuffer + x * s_pixelWidth + y * s_pitch) = color;
     }
 
-    void DrawChar(const wchar_t c, const uint32_t x, const uint32_t y, const uint32_t color)
+    void DrawText(const wchar_t *s, const uint32_t x, const uint32_t y, const Color color, const PsfFont font)
+    {
+        uint32_t cx = x;
+
+        for (wchar_t *c = const_cast<wchar_t *>(s); *c != 0; c++, cx += font.glyphWidth)
+        {
+            DrawChar(*c, cx, y, color, font);
+        }
+    }
+
+    uint32_t GetScreenWidth()
+    {
+        return s_mode.screenWidth;
+    }
+
+    uint32_t GetScreenHeight()
+    {
+        return s_mode.screenHeight;
+    }
+
+    static void DrawChar(const wchar_t c, const uint32_t x, const uint32_t y, const Color color, const PsfFont font)
     {
         uint8_t *where = s_frameBuffer + x * s_pixelWidth + y * s_pitch;
-        uint8_t *glyph = (uint8_t *)_font->glyphBuffer + c * _font->glyphSize;
-        uint8_t glyphBytesPerLine = (_font->glyphWidth + 7) / 8;
+        uint8_t *glyph = static_cast<uint8_t *>(font.glyphBuffer) + c * font.glyphSize;
+        uint8_t glyphBytesPerLine = (font.glyphWidth + 7) / 8;
 
-        for (uint32_t glyphY = 0; glyphY < _font->glyphHeight; glyphY++)
+        for (uint32_t glyphY = 0; glyphY < font.glyphHeight; glyphY++)
         {
             uint8_t *line = where;
             uint32_t glyphX = 0;
@@ -56,12 +77,12 @@ namespace BrewOS::Graphics
             for (uint8_t *glyphByte = glyph; glyphByte < glyph + glyphBytesPerLine; glyphByte++)
             {
                 // Start at bit 7 and shift right through all 8 bits
-                for (uint8_t glyphBit = 0x80; glyphBit > 0 && glyphX < _font->glyphWidth; glyphBit >>= 1)
+                for (uint8_t glyphBit = 0x80; glyphBit > 0 && glyphX < font.glyphWidth; glyphBit >>= 1)
                 {
                     // Draw pixel when glyph bit is on
                     if (*glyphByte & glyphBit)
                     {
-                        *(uint32_t *)line = color;
+                        *reinterpret_cast<Color *>(line) = color;
                     }
 
                     // Next pixel for framebuffer and glyph
@@ -74,25 +95,5 @@ namespace BrewOS::Graphics
             where += s_pitch;
             glyph += glyphBytesPerLine;
         }
-    }
-
-    void DrawText(const wchar_t *s, const uint32_t x, const uint32_t y, const uint32_t color)
-    {
-        uint32_t cx = x;
-
-        for (wchar_t *c = (wchar_t *)s; *c != 0; c++, cx += _font->glyphWidth)
-        {
-            DrawChar(*c, cx, y, color);
-        }
-    }
-
-    uint32_t GetScreenWidth()
-    {
-        return s_mode.screenWidth;
-    }
-
-    uint32_t GetScreenHeight()
-    {
-        return s_mode.screenHeight;
     }
 }

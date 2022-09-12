@@ -1,6 +1,8 @@
 #ifndef BREWOS_GRAPHICS_H
 #define BREWOS_GRAPHICS_H
 
+#include <graphics/colors.hpp>
+#include <graphics/fonts.hpp>
 #include <stdint.h>
 
 namespace BrewOS::Graphics
@@ -39,24 +41,13 @@ namespace BrewOS::Graphics
         GraphicsMode mode;
     } GraphicsOutput;
 
-    typedef struct Psf
-    {
-        void *glyphBuffer;
-        uint32_t glyphCount;
-        uint32_t glyphSize;
-        uint32_t glyphHeight;
-        uint32_t glyphWidth;
-    } Psf;
-
     void Initialize();
 
-    void ClearScreen(const uint32_t color);
+    void ClearScreen(const Color color);
 
-    void DrawPoint(const uint32_t x, const uint32_t y, const uint32_t color);
+    void DrawPoint(const uint32_t x, const uint32_t y, const Color color);
 
-    void DrawChar(const wchar_t c, const uint32_t x, const uint32_t y, const uint32_t color);
-
-    void DrawText(const wchar_t *s, const uint32_t x, const uint32_t y, const uint32_t color);
+    void DrawText(const wchar_t *s, const uint32_t x, const uint32_t y, const Color color, const PsfFont font);
 
     uint32_t GetScreenWidth();
 

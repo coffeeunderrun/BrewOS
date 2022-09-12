@@ -50,6 +50,7 @@ load_page_tables:
     mov rax, 0x83           ; Present, writable, and 1 GiB pages
     mov [p3], rax           ; Identity map first 1 GiB
     add rax, 0x40000000
+    ; TODO: map framebuffer rather than first 3 GiB
     mov [p3 + 1 * 8], rax   ; Identity map second 1 GiB
     add rax, 0x40000000
     mov [p3 + 2 * 8], rax   ; Identity map third 1 GiB

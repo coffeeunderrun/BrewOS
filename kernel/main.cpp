@@ -1,5 +1,8 @@
-#include <graphics.hpp>
 #include <memory.hpp>
+#include <graphics/graphics.hpp>
+
+// TODO: font should be moved to higher-half
+extern const BrewOS::Graphics::PsfFont *_font;
 
 namespace BrewOS
 {
@@ -13,7 +16,7 @@ namespace BrewOS
 
     extern "C" void KernelMain()
     {
-        Graphics::ClearScreen(0x6495ED);
-        Graphics::DrawText(L"Welcome to BrewOS!", 0, 0, 0xFFFFFF);
+        Graphics::ClearScreen(Graphics::Color::CornflowerBlue);
+        Graphics::DrawText(L"Welcome to BrewOS!", 0, 0, Graphics::Color::White, *_font);
     }
 }
