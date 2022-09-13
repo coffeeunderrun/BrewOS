@@ -40,11 +40,11 @@ namespace BrewOS::Graphics
 
     void DrawText(const wchar_t *s, const uint32_t x, const uint32_t y, const Color color, const PsfFont font)
     {
-        uint32_t cx = x;
+        wchar_t *c = const_cast<wchar_t *>(s);
 
-        for (wchar_t *c = const_cast<wchar_t *>(s); *c != 0; c++, cx += font.glyphWidth)
+        for (uint32_t i = x; *c != 0; i += font.glyphWidth)
         {
-            DrawChar(*c, cx, y, color, font);
+            DrawChar(*c++, i, y, color, font);
         }
     }
 

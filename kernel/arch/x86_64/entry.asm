@@ -63,6 +63,16 @@ load_page_tables:
     or rax, 0x3 ; Present, writable, and 4 KiB pages
     mov [p2], rax
 
+    ; TODO: this should be handled by kernel VMM once implemented
+    ; Map kernel heap
+    mov rax, 0x83   ; Present, writable, and 2 MiB pages
+    mov rcx, 4      ; 4 * 2 MiB = 8 MiB
+    mov rdi, p2 + 8 ; Start at second 2 MiB
+.next_p2:
+    stosq
+    add rax, 200000 ; Next 2 MiB
+    loop .next_p2
+
     ; Page table index (map physical kernel pages to start of -2 GiB)
     mov rax, [_kernel_start] ; Start at kernel physical top
     or rax, 0x3              ; Present and writable

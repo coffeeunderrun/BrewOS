@@ -5,10 +5,7 @@ VIRTUAL_BASE_ADDRESS = 0xFFFFFFFF80000000;
 
 SECTIONS
 {
-    /*
-     * Lower-half 
-     */
-
+    /* Lower-half */
     .entry.text ALIGN(4K) :
     {
         *entry*(.text*)
@@ -19,10 +16,7 @@ SECTIONS
         *entry*(.data*)
     }
 
-    /*
-     * Higher-half
-     */
-
+    /* Higher-half */
     . += VIRTUAL_BASE_ADDRESS;
 
     .text ALIGN(4K) :
@@ -61,6 +55,12 @@ SECTIONS
         *(COMMON)
     }
     _bss_size = SIZEOF(.bss);
+
+    /* Align for 2 MiB pages */
+    . = ALIGN(2M);
+    _heap_start = .;
+    . += 8M;
+    _heap_end = .;
 
     /DISCARD/ :
     {
