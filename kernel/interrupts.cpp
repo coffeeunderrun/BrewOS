@@ -10,7 +10,11 @@ namespace BrewOS::Interrupts
         _init_interrupts();
     }
 
-    extern "C" void InterruptHandler(uint64_t vector, uint64_t code, CPU::Registers *registers)
+    extern "C" void InterruptHandler(uint64_t vector, CPU::Registers *registers)
+    {
+    }
+
+    extern "C" void ErrorHandler(uint64_t vector, uint64_t error, CPU::Registers *registers)
     {
     }
 }

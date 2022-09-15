@@ -1,4 +1,4 @@
-extern InterruptHandler
+extern InterruptHandler, ErrorHandler
 
 bits 64
 
@@ -61,13 +61,13 @@ ICW4           equ 0x1
 
 %macro ISR_ERROR 1
 isr%1:
-    pop qword [error]     ; Save error code and remove from stack
-    PUSH_ALL              ; Push all registers to stack
-    mov rdi, %1           ; Vector
-    mov rsi, [error]      ; Error code
-    mov rdx, rsp          ; Pointer to register structure
-    call InterruptHandler ; Pass parameters to interrupt handler
-    POP_ALL               ; Restore registers from stack
+    pop qword [error] ; Save error code and remove from stack
+    PUSH_ALL          ; Push all registers to stack
+    mov rdi, %1       ; Vector
+    mov rsi, [error]  ; Error code
+    mov rdx, rsp      ; Pointer to register structure
+    call ErrorHandler ; Pass parameters to interrupt handler
+    POP_ALL           ; Restore registers from stack
     iretq
 %endmacro
 
@@ -75,19 +75,17 @@ isr%1:
 isr%1:
     PUSH_ALL              ; Push all registers to stack
     mov rdi, %1           ; Vector
-    xor rsi, rsi          ; Zero (no code)
-    mov rdx, rsp          ; Pointer to register structure
+    mov rsi, rsp          ; Pointer to register structure
     call InterruptHandler ; Pass parameters to interrupt handler
     POP_ALL               ; Restore registers from stack
     iretq
 %endmacro
 
-%macro ISR_HARDWARE 1-2
+%macro ISR_HARDWARE 1
 isr%1:
     PUSH_ALL              ; Push all registers to stack
     mov rdi, %1           ; Vector
-    mov rsi, %2           ; Original hardware IRQ before remap
-    mov rdx, rsp          ; Pointer to register structure
+    mov rsi, rsp          ; Pointer to register structure
     call InterruptHandler ; Pass parameters to interrupt handler
     mov rdi, %1           ; Vector
     call ack_interrupt    ; Tell PIC interrupt was acknowledged
@@ -257,22 +255,22 @@ ISR_ERROR    29 ; VMM communication exception
 ISR_ERROR    30 ; Security exception
 
 ; Hardware interrupts
-ISR_HARDWARE 32, 0  ; PIT
-ISR_HARDWARE 33, 1  ; Keyboard
-ISR_HARDWARE 34, 2  ; PIC cascade
-ISR_HARDWARE 35, 3  ; COM2/COM4
-ISR_HARDWARE 36, 4  ; COM1/COM3
-ISR_HARDWARE 37, 5  ; LPT2
-ISR_HARDWARE 38, 6  ; Floppy disk controller
-ISR_HARDWARE 39, 7  ; LPT1
-ISR_HARDWARE 40, 8  ; RTC
-ISR_HARDWARE 41, 9  ; Available
-ISR_HARDWARE 42, 10 ; Available
-ISR_HARDWARE 43, 11 ; Available
-ISR_HARDWARE 44, 12 ; Mouse
-ISR_HARDWARE 45, 13 ; FPU
-ISR_HARDWARE 46, 14 ; Primary hard disk controller
-ISR_HARDWARE 47, 15 ; Secondary hard disk controller
+ISR_HARDWARE 32 ; PIT
+ISR_HARDWARE 33 ; Keyboard
+ISR_HARDWARE 34 ; PIC cascade
+ISR_HARDWARE 35 ; COM2/COM4
+ISR_HARDWARE 36 ; COM1/COM3
+ISR_HARDWARE 37 ; LPT2
+ISR_HARDWARE 38 ; Floppy disk controller
+ISR_HARDWARE 39 ; LPT1
+ISR_HARDWARE 40 ; RTC
+ISR_HARDWARE 41 ; Available
+ISR_HARDWARE 42 ; Available
+ISR_HARDWARE 43 ; Available
+ISR_HARDWARE 44 ; Mouse
+ISR_HARDWARE 45 ; FPU
+ISR_HARDWARE 46 ; Primary hard disk controller
+ISR_HARDWARE 47 ; Secondary hard disk controller
 
 section .data
 
