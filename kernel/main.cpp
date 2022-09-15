@@ -1,3 +1,4 @@
+#include <interrupts.hpp>
 #include <graphics/graphics.hpp>
 #include <memory/memory.hpp>
 
@@ -8,6 +9,7 @@ namespace BrewOS
 {
     extern "C" void KernelInit()
     {
+        Interrupts::Initialize();
         Graphics::Initialize();
 
         // Make sure this is done last as data in lower-half from UEFI will be lost

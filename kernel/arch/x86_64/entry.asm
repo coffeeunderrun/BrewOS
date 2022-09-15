@@ -94,16 +94,21 @@ load_page_tables:
 section .data
 
 global _kernel_start
-_kernel_start: dq 0
+_kernel_start:
+    dq 0
 
 global _kernel_pages
-_kernel_pages: dq 0
+_kernel_pages:
+    dq 0
 
 global _memory_map
-_memory_map: dq 0
+_memory_map:
+    dq 0
 
 global _graphics_output
-_graphics_output: dq 0
+_graphics_output:
+    dq 0
 
 global _font
-_font: dq 0
+_font:
+    dq 0
