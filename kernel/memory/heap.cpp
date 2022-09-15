@@ -1,5 +1,5 @@
-#include <memory/heap.hpp>
-#include <memory/memory.hpp>
+#include "heap.hpp"
+#include "memory.hpp"
 
 #define MAGIC 0xC0FFEE01
 

@@ -1,22 +1,25 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(kernel ASM_NASM C CXX)
+project(kernel CXX)
 
 set(CMAKE_CXX_FLAGS "-ffreestanding -fbuiltin -fno-stack-protector -fno-exceptions -fno-rtti -mno-red-zone -mcmodel=kernel")
 
-file(GLOB_RECURSE ASM_SOURCES "arch/${CMAKE_SYSTEM_PROCESSOR}/*.asm")
-file(GLOB_RECURSE CXX_SOURCES "arch/${CMAKE_SYSTEM_PROCESSOR}/*.cpp" "*.cpp")
+set(CMAKE_EXE_LINKER_FLAGS "-lgcc -nostdlib -zmax-page-size=0x1000 -Tarch/${CMAKE_SYSTEM_PROCESSOR}/linker.lds")
 
-include_directories("include" "include/${CMAKE_SYSTEM_PROCESSOR}")
+file(GLOB_RECURSE CXX_SOURCES "*.cpp")
 
-add_executable(kernel.elf ${ASM_SOURCES} ${CXX_SOURCES})
+add_subdirectory(arch)
 
-target_compile_options(kernel.elf
+add_executable(kernel ${CXX_SOURCES})
+
+target_compile_options(kernel
 PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -Werror -Wno-unused-parameter>
 )
 
-set_target_properties(kernel.elf 
+target_link_libraries(kernel arch)
+
+set_target_properties(kernel
 PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED YES

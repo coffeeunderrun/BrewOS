@@ -1,4 +1,4 @@
-#include <memory/memory.hpp>
+#include "memory.hpp"
 
 /*** DO NOT USE THESE AFTER INITIALIZATION ***/
 extern const void *_kernel_start;    // Start of kernel in physical address space

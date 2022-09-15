@@ -1,6 +1,6 @@
 STARTUP=BrewOSPkg/Loader/startup.nsh
 LOADER=edk2/Build/BrewOS/DEBUG_GCC5/X64/Loader.efi
-KERNEL=bin/kernel.elf
+KERNEL=bin/kernel
 IMAGE=brewos.img
 ASSETS=assets
 

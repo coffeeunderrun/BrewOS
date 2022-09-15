@@ -1,4 +1,4 @@
-#include <graphics/graphics.hpp>
+#include "graphics.hpp"
 
 /*** DO NOT USE THIS AFTER INITIALIZATION ***/
 extern const BrewOS::Graphics::GraphicsOutput *_graphics_output;

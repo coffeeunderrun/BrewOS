@@ -32,7 +32,7 @@ EFI_STATUS EFIAPI UefiEntry(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTabl
 
     // Load kernel image into memory wherever UEFI sees fit
     ElfImage kernel;
-    status = LoadElfImage(L"kernel.elf", imageHandle, &kernel);
+    status = LoadElfImage(L"kernel", imageHandle, &kernel);
     if (EFI_ERROR(status))
     {
         Print(L"Unable to load KERNEL.\n");

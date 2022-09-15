@@ -1,6 +1,6 @@
-#include <interrupts.hpp>
-#include <graphics/graphics.hpp>
-#include <memory/memory.hpp>
+#include "interrupts.hpp"
+#include "graphics/graphics.hpp"
+#include "memory/memory.hpp"
 
 // TODO: font should be moved to higher-half
 extern const BrewOS::Graphics::PsfFont *_font;

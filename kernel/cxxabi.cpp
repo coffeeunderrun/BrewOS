@@ -1,5 +1,5 @@
+#include "memory/heap.hpp"
 #include <stddef.h>
-#include <memory/heap.hpp>
 
 typedef int __guard __attribute__((mode(__DI__)));
 
