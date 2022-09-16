@@ -1,24 +1,27 @@
 #include "memory/heap.hpp"
 #include <stddef.h>
 
-typedef int __guard __attribute__((mode(__DI__)));
+typedef int Guard __attribute__((mode(__DI__)));
 
-extern "C" int __cxa_guard_acquire(__guard *guard)
+extern "C"
 {
-    return *reinterpret_cast<char *>(guard) == 0;
-}
+    int __cxa_guard_acquire(Guard *guard)
+    {
+        return *reinterpret_cast<char *>(guard) == 0;
+    }
 
-extern "C" void __cxa_guard_release(__guard *guard)
-{
-    *reinterpret_cast<char *>(guard) = 1;
-}
+    void __cxa_guard_release(Guard *guard)
+    {
+        *reinterpret_cast<char *>(guard) = 1;
+    }
 
-extern "C" void __cxa_guard_abort(__guard *)
-{
-}
+    void __cxa_guard_abort(Guard *)
+    {
+    }
 
-extern "C" void __cxa_pure_virtual()
-{
+    void __cxa_pure_virtual()
+    {
+    }
 }
 
 void *operator new(size_t size)

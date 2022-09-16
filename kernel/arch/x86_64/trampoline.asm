@@ -44,7 +44,9 @@ call_global_ctors:
     cmp rcx, 0
     je .done
 .next:
+    push rcx
     call [rbx]
+    pop rcx
     add rbx, 8
     loop .next
 .done:
@@ -59,7 +61,9 @@ call_global_dtors:
     je .done
 .next:
     sub rbx, 8
+    push rcx
     call [rbx]
+    pop rcx
     loop .next
 .done:
 
