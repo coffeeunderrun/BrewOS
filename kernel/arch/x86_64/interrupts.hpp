@@ -50,7 +50,7 @@ namespace BrewOS::Interrupts
         const uint64_t HDD_CONTROLLER_2 = 47;
     }
 
-    typedef void (*Callback)(CPU::Registers *registers);
+    typedef void (*Callback)(uint64_t error, CPU::Registers *registers);
 
     // Implementations in kernel
     extern void AddCallback(uint64_t vector, Callback callback);

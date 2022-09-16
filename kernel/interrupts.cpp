@@ -18,29 +18,13 @@ namespace BrewOS::CPU
 
 namespace BrewOS::Interrupts
 {
-    typedef void (*Callback)(CPU::Registers *registers);
+    typedef void (*Callback)(uint64_t error, CPU::Registers *registers);
 
     static Vector<Callback> *s_callbacks[INTERRUPT_VECTOR_MAX];
 
     void Initialize()
     {
         _init_interrupts();
-    }
-
-    extern "C" void InterruptHandler(uint64_t vector, CPU::Registers *registers)
-    {
-        for (Callback callback : *s_callbacks[vector])
-        {
-            callback(registers);
-        }
-    }
-
-    extern "C" void ErrorHandler(uint64_t vector, uint64_t error, CPU::Registers *registers)
-    {
-        for (Callback callback : *s_callbacks[vector])
-        {
-            callback(registers);
-        }
     }
 
     void AddCallback(uint64_t vector, Callback callback)
@@ -72,6 +56,14 @@ namespace BrewOS::Interrupts
                 // Decrement index as removing an item shifts subsequent items
                 s_callbacks[vector]->Remove(i--);
             }
+        }
+    }
+
+    extern "C" void InterruptHandler(uint64_t vector, uint64_t error, CPU::Registers *registers)
+    {
+        for (Callback callback : *s_callbacks[vector])
+        {
+            callback(error, registers);
         }
     }
 }

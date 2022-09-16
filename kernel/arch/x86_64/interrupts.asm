@@ -1,4 +1,4 @@
-extern InterruptHandler, ErrorHandler
+extern InterruptHandler
 
 bits 64
 
@@ -61,13 +61,13 @@ ICW4           equ 0x1
 
 %macro ISR_ERROR 1
 isr%1:
-    pop qword [error] ; Save error code and remove from stack
-    PUSH_ALL          ; Push all registers to stack
-    mov rdi, %1       ; Vector
-    mov rsi, [error]  ; Error code
-    mov rdx, rsp      ; Pointer to register structure
-    call ErrorHandler ; Pass parameters to interrupt handler
-    POP_ALL           ; Restore registers from stack
+    pop qword [error]     ; Save error code and remove from stack
+    PUSH_ALL              ; Push all registers to stack
+    mov rdi, %1           ; Vector
+    mov rsi, [error]      ; Error code
+    mov rdx, rsp          ; Pointer to register structure
+    call InterruptHandler ; Pass parameters to interrupt handler
+    POP_ALL               ; Restore registers from stack
     iretq
 %endmacro
 
@@ -75,7 +75,8 @@ isr%1:
 isr%1:
     PUSH_ALL              ; Push all registers to stack
     mov rdi, %1           ; Vector
-    mov rsi, rsp          ; Pointer to register structure
+    xor rsi, rsi          ; Zero (no error)
+    mov rdx, rsp          ; Pointer to register structure
     call InterruptHandler ; Pass parameters to interrupt handler
     POP_ALL               ; Restore registers from stack
     iretq
@@ -85,7 +86,8 @@ isr%1:
 isr%1:
     PUSH_ALL              ; Push all registers to stack
     mov rdi, %1           ; Vector
-    mov rsi, rsp          ; Pointer to register structure
+    xor rsi, rsi          ; Zero (no error)
+    mov rdx, rsp          ; Pointer to register structure
     call InterruptHandler ; Pass parameters to interrupt handler
     mov rdi, %1           ; Vector
     call ack_interrupt    ; Tell PIC interrupt was acknowledged
