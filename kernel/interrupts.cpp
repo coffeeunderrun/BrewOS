@@ -1,5 +1,6 @@
 #include "interrupts.hpp"
 #include "vector.hpp"
+#include <registers.hpp>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -11,14 +12,9 @@
 
 extern "C" void _init_interrupts();
 
-namespace BrewOS::CPU
-{
-    typedef struct Registers Registers;
-}
-
 namespace BrewOS::Interrupts
 {
-    typedef void (*Callback)(uint64_t error, CPU::Registers *registers);
+    typedef void (*Callback)(uint64_t error, Registers *registers);
 
     static Vector<Callback> *s_callbacks[INTERRUPT_VECTOR_MAX];
 
@@ -59,8 +55,13 @@ namespace BrewOS::Interrupts
         }
     }
 
-    extern "C" void InterruptHandler(uint64_t vector, uint64_t error, CPU::Registers *registers)
+    extern "C" void InterruptHandler(uint64_t vector, uint64_t error, Registers *registers)
     {
+        if (s_callbacks[vector] == nullptr)
+        {
+            return;
+        }
+
         for (Callback callback : *s_callbacks[vector])
         {
             callback(error, registers);

@@ -1,7 +1,8 @@
 #ifndef BREWOS_ARCH_INTERRUPTS_H
 #define BREWOS_ARCH_INTERRUPTS_H
 
-#include "cpu.hpp"
+#include "registers.hpp"
+#include <stdint.h>
 
 namespace BrewOS::Interrupts
 {
@@ -50,7 +51,7 @@ namespace BrewOS::Interrupts
         const uint64_t HDD_CONTROLLER_2 = 47;
     }
 
-    typedef void (*Callback)(uint64_t error, CPU::Registers *registers);
+    typedef void (*Callback)(uint64_t error, Registers *registers);
 
     // Implementations in kernel
     extern void AddCallback(uint64_t vector, Callback callback);

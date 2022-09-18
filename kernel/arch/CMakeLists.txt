@@ -6,9 +6,14 @@ file(GLOB_RECURSE ASM_SOURCES "${CMAKE_SYSTEM_PROCESSOR}/*.asm")
 file(GLOB_RECURSE CXX_SOURCES "${CMAKE_SYSTEM_PROCESSOR}/*.cpp")
 
 add_library(arch
-STATIC
+OBJECT
     ${ASM_SOURCES}
     ${CXX_SOURCES}
+)
+
+target_include_directories(arch
+PUBLIC
+    ${CMAKE_SYSTEM_PROCESSOR}
 )
 
 set_target_properties(arch

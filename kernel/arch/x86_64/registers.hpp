@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace BrewOS::CPU
+namespace BrewOS
 {
     typedef struct Registers
     {

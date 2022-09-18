@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 project(kernel CXX)
 
-set(CMAKE_CXX_FLAGS "-ffreestanding -fbuiltin -fno-stack-protector -fno-exceptions -fno-rtti -fno-use-cxa-atexit -mno-red-zone -mcmodel=kernel")
+set(CMAKE_CXX_FLAGS "-ffreestanding -fbuiltin -fno-stack-protector -fno-exceptions -fno-rtti -mno-red-zone -mcmodel=kernel")
 
 set(CMAKE_EXE_LINKER_FLAGS "-lgcc -nostdlib -zmax-page-size=0x1000 -Tarch/${CMAKE_SYSTEM_PROCESSOR}/linker.lds")
 
@@ -11,6 +11,11 @@ file(GLOB_RECURSE CXX_SOURCES "*.cpp")
 add_subdirectory(arch)
 
 add_executable(kernel ${CXX_SOURCES})
+
+target_include_directories(kernel
+PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 target_compile_definitions(kernel
 PRIVATE
@@ -22,7 +27,9 @@ PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -Werror -Wno-unused-parameter>
 )
 
-target_link_libraries(kernel arch)
+target_link_libraries(kernel
+PRIVATE
+    arch)
 
 set_target_properties(kernel
 PROPERTIES
