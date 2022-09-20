@@ -47,7 +47,7 @@ namespace BrewOS::Graphics
 
     void DrawPoint(const uint32_t x, const uint32_t y, const Color color);
 
-    void DrawText(const wchar_t *s, const uint32_t x, const uint32_t y, const Color color, const PsfFont font);
+    void DrawText(const wchar_t *s, const uint32_t x, const uint32_t y, const Color fg, const Color bg, const PsfFont font);
 
     uint32_t GetScreenWidth();
 

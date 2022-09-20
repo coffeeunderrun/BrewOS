@@ -72,7 +72,7 @@ namespace BrewOS
             const Node *m_current;
 
         public:
-            Iterator() : m_current(m_start)
+            Iterator() : m_current(nullptr)
             {
             }
 

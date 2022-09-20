@@ -12,7 +12,7 @@ namespace BrewOS::Graphics
     static uint32_t s_pixelWidth;      // Width of pixel in bytes
     static uint32_t s_pitch;           // Width of scanline in bytes
 
-    static void DrawChar(const wchar_t c, const uint32_t x, const uint32_t y, const Color color, const PsfFont font);
+    static void DrawChar(const wchar_t c, const uint32_t x, const uint32_t y, const Color fg, const Color bg, const PsfFont font);
 
     void Initialize()
     {
@@ -38,13 +38,13 @@ namespace BrewOS::Graphics
         *reinterpret_cast<Color *>(s_frameBuffer + x * s_pixelWidth + y * s_pitch) = color;
     }
 
-    void DrawText(const wchar_t *s, const uint32_t x, const uint32_t y, const Color color, const PsfFont font)
+    void DrawText(const wchar_t *s, const uint32_t x, const uint32_t y, const Color fg, const Color bg, const PsfFont font)
     {
         wchar_t *c = const_cast<wchar_t *>(s);
 
         for (uint32_t i = x; *c != 0; i += font.glyphWidth)
         {
-            DrawChar(*c++, i, y, color, font);
+            DrawChar(*c++, i, y, fg, bg, font);
         }
     }
 
@@ -58,7 +58,7 @@ namespace BrewOS::Graphics
         return s_mode.screenHeight;
     }
 
-    static void DrawChar(const wchar_t c, const uint32_t x, const uint32_t y, const Color color, const PsfFont font)
+    static void DrawChar(const wchar_t c, const uint32_t x, const uint32_t y, const Color fg, const Color bg, const PsfFont font)
     {
         uint8_t *where = s_frameBuffer + x * s_pixelWidth + y * s_pitch;
         uint8_t *glyph = static_cast<uint8_t *>(font.glyphBuffer) + c * font.glyphSize;
@@ -80,9 +80,13 @@ namespace BrewOS::Graphics
                 for (uint8_t glyphBit = 0x80; glyphBit > 0 && glyphX < font.glyphWidth; glyphBit >>= 1)
                 {
                     // Draw pixel when glyph bit is on
-                    if (*glyphByte & glyphBit)
+                    if (fg != Color::Transparent && *glyphByte & glyphBit)
                     {
-                        *reinterpret_cast<Color *>(line) = color;
+                        *reinterpret_cast<Color *>(line) = fg;
+                    }
+                    else if (bg != Color::Transparent)
+                    {
+                        *reinterpret_cast<Color *>(line) = bg;
                     }
 
                     // Next pixel for framebuffer and glyph

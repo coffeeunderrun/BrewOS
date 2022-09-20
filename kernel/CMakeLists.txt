@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 project(kernel CXX)
 
-set(CMAKE_CXX_FLAGS "-ffreestanding -fbuiltin -fno-stack-protector -fno-exceptions -fno-rtti -mno-red-zone -mcmodel=kernel")
+set(CMAKE_CXX_FLAGS "-ffreestanding -fbuiltin -fno-stack-protector -fno-exceptions -fno-rtti -fno-use-cxa-atexit -mno-red-zone -mcmodel=kernel")
 
 set(CMAKE_EXE_LINKER_FLAGS "-lgcc -nostdlib -zmax-page-size=0x1000 -Tarch/${CMAKE_SYSTEM_PROCESSOR}/linker.lds")
 

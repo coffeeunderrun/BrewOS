@@ -16,7 +16,8 @@ namespace BrewOS
         size_t m_capacity, m_count;
 
     public:
-        Vector(size_t capacity = 1) : m_capacity(capacity)
+        Vector(size_t capacity = 1)
+            : m_capacity(capacity)
         {
             m_data = static_cast<T *>(Memory::Heap::Allocate(capacity * sizeof(T)));
 

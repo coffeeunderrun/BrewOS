@@ -7,6 +7,7 @@ namespace BrewOS::Graphics
 {
     typedef enum class Color
     {
+        Transparent = -1,
         Black = 0x000000,
         CornflowerBlue = 0x6495ED,
         White = 0xFFFFFF
