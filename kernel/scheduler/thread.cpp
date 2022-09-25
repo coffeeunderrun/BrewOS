@@ -9,10 +9,12 @@
 
 namespace BrewOS::Scheduler
 {
+    extern void OnThreadStateChange(Thread *thread);
+
     Thread::Thread()
     {
     }
-    
+
     Thread::Thread(Entry entry)
     {
         m_stack = new uint64_t[KERNEL_STACK_SIZE];
@@ -23,5 +25,11 @@ namespace BrewOS::Scheduler
     Thread::~Thread()
     {
         delete m_stack;
+    }
+
+    void Thread::SetState(ThreadState state)
+    {
+        m_state = state;
+        OnThreadStateChange(this);
     }
 }

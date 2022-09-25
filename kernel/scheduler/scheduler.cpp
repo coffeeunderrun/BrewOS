@@ -2,40 +2,61 @@
 #include "scheduler.hpp"
 #include "thread.hpp"
 
+#define MAX_PRIORITY 3
+
 extern "C" void _switch(BrewOS::Scheduler::Thread *from, BrewOS::Scheduler::Thread *to);
 
 namespace BrewOS::Scheduler
 {
-    static LinkedList<Process *> s_processes;
-    static Thread *s_threadKernel = nullptr,
+    static Process s_kernelProcess;
+    static Thread *s_threadKernel = *s_kernelProcess.GetThreads().begin(),
                   *s_threadCurrent = nullptr;
+
+    static LinkedList<Thread *> s_threadQueue[MAX_PRIORITY];
 
     void Start()
     {
-        Process *kernelProcess = new Process(0, 1);
-        AddProcess(kernelProcess);
-        kernelProcess->AddThread(s_threadKernel = new Thread());
-
-        while (true)
+        for (auto i = 0; true; i = i >= MAX_PRIORITY ? 0 : i + 1)
         {
-            for (Process *process : s_processes)
+            for (auto thread : s_threadQueue[i])
             {
-                for (Thread *thread : process->GetThreads())
-                {
-                    s_threadCurrent = thread;
-                    _switch(s_threadKernel, thread);
-                }
+                s_threadCurrent = thread;
+                thread->SetState(ThreadState::Active);
+                _switch(s_threadKernel, thread);
+                thread->SetState(ThreadState::Ready);
             }
         }
     }
 
-    void Switch()
+    void Yield()
     {
         _switch(s_threadCurrent, s_threadKernel);
     }
 
-    void AddProcess(Process *process)
+    void AddProcess(Entry entry)
     {
-        s_processes.Add(process);
+        s_kernelProcess.AddChild(0, 0, entry);
+    }
+
+    void OnThreadStateChange(Thread *thread)
+    {
+        if (thread == s_threadKernel)
+        {
+            return;
+        }
+
+        switch (thread->GetState())
+        {
+        case ThreadState::Ready:
+            s_threadQueue[thread->GetPriority()].Add(thread);
+            break;
+
+        default:
+            for (auto i = 0; i < MAX_PRIORITY; i++)
+            {
+                s_threadQueue[i].Remove(thread);
+            }
+            break;
+        }
     }
 }

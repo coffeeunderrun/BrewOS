@@ -5,9 +5,9 @@ namespace BrewOS::Scheduler
 {
     void Start();
 
-    void Switch();
+    void Yield();
 
-    void AddProcess(Process *process);
+    void AddProcess(Entry entry);
 }
 
 #endif // BREWOS_SCHEDULER_H

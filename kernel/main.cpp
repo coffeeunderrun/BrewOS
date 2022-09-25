@@ -14,10 +14,10 @@ namespace BrewOS
     {
         while (true)
         {
-            Graphics::DrawText(L"Task 1", 0, 20, Graphics::Color::Red, Graphics::Color::CornflowerBlue, *_font);
+            Graphics::DrawText(L"Task 1", 0, 20, Graphics::Color::Green, Graphics::Color::Black, *_font);
             for (uint64_t i = 0; i < 0xFFFFFFF; i++)
                 ;
-            Scheduler::Switch();
+            Scheduler::Yield();
         }
     }
 
@@ -25,21 +25,10 @@ namespace BrewOS
     {
         while (true)
         {
-            Graphics::DrawText(L"Task 2", 0, 20, Graphics::Color::Green, Graphics::Color::CornflowerBlue, *_font);
+            Graphics::DrawText(L"Task 2", 0, 20, Graphics::Color::Red, Graphics::Color::Black, *_font);
             for (uint64_t i = 0; i < 0xFFFFFFF; i++)
                 ;
-            Scheduler::Switch();
-        }
-    }
-
-    void Task3()
-    {
-        while (true)
-        {
-            Graphics::DrawText(L"Task 3", 0, 20, Graphics::Color::Blue, Graphics::Color::CornflowerBlue, *_font);
-            for (uint64_t i = 0; i < 0xFFFFFFF; i++)
-                ;
-            Scheduler::Switch();
+            Scheduler::Yield();
         }
     }
 
@@ -54,13 +43,13 @@ namespace BrewOS
 
     extern "C" void KernelMain()
     {
-        Graphics::ClearScreen(Graphics::Color::CornflowerBlue);
-        Graphics::DrawText(L"Welcome to BrewOS!", 0, 0, Graphics::Color::White, Graphics::Color::Transparent, *_font);
+        Graphics::ClearScreen(Graphics::Color::Black);
+        Graphics::DrawText(L"Welcome to BrewOS!", 0, 0, Graphics::Color::Green, Graphics::Color::Black, *_font);
 
-        Scheduler::AddProcess(new Scheduler::Process(1, 1, Task1));
-        Scheduler::AddProcess(new Scheduler::Process(2, 1, Task2));
-        Scheduler::AddProcess(new Scheduler::Process(3, 1, Task3));
+        Scheduler::AddProcess(Task1);
+        Scheduler::AddProcess(Task2);
         Scheduler::Start();
+
         // This point will not be reached after starting the scheduler
     }
 }
