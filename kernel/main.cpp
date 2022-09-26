@@ -41,7 +41,7 @@ namespace BrewOS
         Memory::Initialize();
     }
 
-    extern "C" void KernelMain()
+    extern "C" __attribute__((noreturn)) void KernelMain()
     {
         Graphics::ClearScreen(Graphics::Color::Black);
         Graphics::DrawText(L"Welcome to BrewOS!", 0, 0, Graphics::Color::Green, Graphics::Color::Black, *_font);
@@ -50,6 +50,7 @@ namespace BrewOS
         Scheduler::AddProcess(Task2);
         Scheduler::Start();
 
-        // This point will not be reached after starting the scheduler
+        while (true)
+            ;
     }
 }

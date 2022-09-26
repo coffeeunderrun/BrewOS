@@ -1,5 +1,7 @@
 extern _trampoline
 
+global _entry, _kernel_start, _kernel_pages, _memory_map, _graphics_output, _font
+
 bits 64
 
 p4 equ 0x8000 ; Temporary PML4
@@ -9,7 +11,6 @@ p1 equ 0xB000 ; Temporary PTI (first of multiple tables; count based on kernel p
 
 section .text
 
-global _entry
 _entry:
     cli ; No interrupts
     cld ; Index registers increment
@@ -93,22 +94,17 @@ load_page_tables:
 
 section .data
 
-global _kernel_start
 _kernel_start:
     dq 0
 
-global _kernel_pages
 _kernel_pages:
     dq 0
 
-global _memory_map
 _memory_map:
     dq 0
 
-global _graphics_output
 _graphics_output:
     dq 0
 
-global _font
 _font:
     dq 0
