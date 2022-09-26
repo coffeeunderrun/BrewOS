@@ -31,13 +31,6 @@ SECTIONS
     }
     _ctor_count = SIZEOF(.ctors) / 8;
 
-    .dtors ALIGN(4K) :
-    {
-        *(SORT(.dtors*))
-        _dtor_end = .;
-    }
-    _dtor_count = SIZEOF(.dtors) / 8;
-
     .rodata ALIGN(4K) :
     {
         *(.rodata*)

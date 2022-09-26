@@ -16,9 +16,12 @@ namespace BrewOS
         Memory::Initialize();
     }
 
-    extern "C" void KernelMain()
+    extern "C" __attribute__((noreturn)) void KernelMain()
     {
         Graphics::ClearScreen(Graphics::Color::CornflowerBlue);
         Graphics::DrawText(L"Welcome to BrewOS!", 0, 0, Graphics::Color::White, Graphics::Color::Transparent, *_font);
+
+        while (true)
+            ;
     }
 }

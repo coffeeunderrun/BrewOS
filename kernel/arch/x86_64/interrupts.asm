@@ -1,4 +1,6 @@
-extern InterruptHandler
+extern InterruptHandler, _gdt.pl0_cs_dsc
+
+global _init_interrupts
 
 bits 64
 
@@ -14,12 +16,21 @@ ICW3_MASTER    equ 0x4
 ICW3_SLAVE     equ 0x2
 ICW4           equ 0x1
 
-%macro LOAD_IDT_ENTRY 1-4 0x8, 0x8E, 0
-    mov rax, qword isr%1           ; Address of ISR
-    mov cx, %2                     ; Segment selector
-    mov dh, %3                     ; Flags
-    mov dl, %4                     ; IST offset
-    mov rdi, qword idt + (%1 * 16) ; Point to entry in IDT
+%macro IDT_INTERRUPT 1-2 0
+    mov rax, isr%1           ; Address of ISR
+    mov cx, _gdt.pl0_cs_dsc  ; Segment selector
+    mov dh, 0x8E             ; Flags
+    mov dl, %2               ; IST offset
+    mov rdi, idt + (%1 * 16) ; Point to entry in IDT
+    call load_idt_entry
+%endmacro
+
+%macro IDT_EXCEPTION 1-2 0
+    mov rax, isr%1           ; Address of ISR
+    mov cx, _gdt.pl0_cs_dsc  ; Segment selector
+    mov dh, 0x8F             ; Flags
+    mov dl, %2               ; IST offset
+    mov rdi, idt + (%1 * 16) ; Point to entry in IDT
     call load_idt_entry
 %endmacro
 
@@ -97,7 +108,6 @@ isr%1:
 
 section .text
 
-global _init_interrupts
 _init_interrupts:
     ; Initialize programmable interrupt controllers
     mov al, ICW1
@@ -133,59 +143,59 @@ _init_interrupts:
     rep stosq
 
     ; Load entries into IDT
-    LOAD_IDT_ENTRY 0  ; Divide by zero error
-    LOAD_IDT_ENTRY 1  ; Debug
-    LOAD_IDT_ENTRY 2  ; Non-maskable interrupt
-    LOAD_IDT_ENTRY 3  ; Breakpoint
-    LOAD_IDT_ENTRY 4  ; Overflow
-    LOAD_IDT_ENTRY 5  ; Bound range exceeded
-    LOAD_IDT_ENTRY 6  ; Invalid opcode
-    LOAD_IDT_ENTRY 7  ; Device not available
-    LOAD_IDT_ENTRY 8  ; Double fault
+    IDT_EXCEPTION 0 ; Divide by zero error
+    IDT_EXCEPTION 1 ; Debug
+    IDT_EXCEPTION 2 ; Non-maskable interrupt
+    IDT_EXCEPTION 3 ; Breakpoint
+    IDT_EXCEPTION 4 ; Overflow
+    IDT_EXCEPTION 5 ; Bound range exceeded
+    IDT_EXCEPTION 6 ; Invalid opcode
+    IDT_EXCEPTION 7 ; Device not available
+    IDT_EXCEPTION 8 ; Double fault
     
     ; Vector 9 is unsupported on x86_64 architectures
 
-    LOAD_IDT_ENTRY 10 ; Invalid TSS
-    LOAD_IDT_ENTRY 11 ; Segment not present
-    LOAD_IDT_ENTRY 12 ; Stack segment fault
-    LOAD_IDT_ENTRY 13 ; General protection fault
-    LOAD_IDT_ENTRY 14 ; Page fault
+    IDT_EXCEPTION 10 ; Invalid TSS
+    IDT_EXCEPTION 11 ; Segment not present
+    IDT_EXCEPTION 12 ; Stack segment fault
+    IDT_EXCEPTION 13 ; General protection fault
+    IDT_EXCEPTION 14 ; Page fault
 
     ; Vector 15 is reserved
 
-    LOAD_IDT_ENTRY 16 ; x87 floating point exception
-    LOAD_IDT_ENTRY 17 ; Alignment check
-    LOAD_IDT_ENTRY 18 ; Machine check
-    LOAD_IDT_ENTRY 19 ; SIMD floating point exception
+    IDT_EXCEPTION 16 ; x87 floating point exception
+    IDT_EXCEPTION 17 ; Alignment check
+    IDT_EXCEPTION 18 ; Machine check
+    IDT_EXCEPTION 19 ; SIMD floating point exception
 
     ; Vector 20 is reserved
 
-    LOAD_IDT_ENTRY 21 ; Control protection exception
+    IDT_EXCEPTION 21 ; Control protection exception
 
     ; Vectors 22 - 27 are reserved
 
-    LOAD_IDT_ENTRY 28 ; Hypervisor injection exception
-    LOAD_IDT_ENTRY 29 ; VMM communication exception
-    LOAD_IDT_ENTRY 30 ; Security exception
+    IDT_EXCEPTION 28 ; Hypervisor injection exception
+    IDT_EXCEPTION 29 ; VMM communication exception
+    IDT_EXCEPTION 30 ; Security exception
 
     ; Vector 31 is reserved
 
-    LOAD_IDT_ENTRY 32 ; PIT
-    LOAD_IDT_ENTRY 33 ; Keyboard
-    LOAD_IDT_ENTRY 34 ; PIC cascade
-    LOAD_IDT_ENTRY 35 ; COM2/COM4
-    LOAD_IDT_ENTRY 36 ; COM1/COM3
-    LOAD_IDT_ENTRY 37 ; LPT2
-    LOAD_IDT_ENTRY 38 ; Floppy disk controller
-    LOAD_IDT_ENTRY 39 ; LPT1
-    LOAD_IDT_ENTRY 40 ; RTC
-    LOAD_IDT_ENTRY 41 ; Available
-    LOAD_IDT_ENTRY 42 ; Available
-    LOAD_IDT_ENTRY 43 ; Available
-    LOAD_IDT_ENTRY 44 ; Mouse
-    LOAD_IDT_ENTRY 45 ; FPU
-    LOAD_IDT_ENTRY 46 ; Primary hard disk controller
-    LOAD_IDT_ENTRY 47 ; Secondary hard disk controller
+    IDT_INTERRUPT 32 ; PIT
+    IDT_INTERRUPT 33 ; Keyboard
+    IDT_INTERRUPT 34 ; PIC cascade
+    IDT_INTERRUPT 35 ; COM2/COM4
+    IDT_INTERRUPT 36 ; COM1/COM3
+    IDT_INTERRUPT 37 ; LPT2
+    IDT_INTERRUPT 38 ; Floppy disk controller
+    IDT_INTERRUPT 39 ; LPT1
+    IDT_INTERRUPT 40 ; RTC
+    IDT_INTERRUPT 41 ; Available
+    IDT_INTERRUPT 42 ; Available
+    IDT_INTERRUPT 43 ; Available
+    IDT_INTERRUPT 44 ; Mouse
+    IDT_INTERRUPT 45 ; FPU
+    IDT_INTERRUPT 46 ; Primary hard disk controller
+    IDT_INTERRUPT 47 ; Secondary hard disk controller
 
     ; Vectors 48 - 255 are unused
 
@@ -278,8 +288,8 @@ section .data
 
 align 8
 idt_ptr:
-    dw 0xFFF ; Limit
-    dq idt   ; Offset
+    dw idt.size ; Limit
+    dq idt      ; Offset
 
 error:
     dq 0
@@ -289,3 +299,4 @@ section .bss
 align 0x1000
 idt:
     resb 0x1000
+.size: equ $ - idt - 1
