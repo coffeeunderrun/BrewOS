@@ -1,5 +1,5 @@
-#ifndef BREWOS_GRAPHICS_FONTS_H
-#define BREWOS_GRAPHICS_FONTS_H
+#ifndef BREWOS_FONTS_H
+#define BREWOS_FONTS_H
 
 #include <stdint.h>
 
@@ -15,4 +15,4 @@ namespace BrewOS::Graphics
     } PsfFont;
 }
 
-#endif // BREWOS_GRAPHICS_FONTS_H
+#endif // BREWOS_FONTS_H

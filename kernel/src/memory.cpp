@@ -1,9 +1,9 @@
-#include "memory.hpp"
+#include <memory.hpp>
 
 /*** DO NOT USE THESE AFTER INITIALIZATION ***/
-extern const void *_kernel_start;    // Start of kernel in physical address space
-extern const uint32_t _kernel_pages; // Number of contiguous pages from start of kernel
-extern const BrewOS::Memory::MemoryMap *_memory_map;
+extern const void *kernel_start;    // Start of kernel in physical address space
+extern const uint32_t kernel_pages; // Number of contiguous pages from start of kernel
+extern const BrewOS::Memory::MemoryMap *memory_map;
 
 namespace BrewOS::Memory
 {

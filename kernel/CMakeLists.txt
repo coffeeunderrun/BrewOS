@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS "-ffreestanding -fbuiltin -fno-stack-protector -fno-exceptio
 
 set(CMAKE_EXE_LINKER_FLAGS "-lgcc -nostdlib -zmax-page-size=0x1000 -Tarch/${CMAKE_SYSTEM_PROCESSOR}/linker.lds")
 
-file(GLOB_RECURSE CXX_SOURCES "*.cpp")
+file(GLOB_RECURSE CXX_SOURCES "src/*.cpp")
 
 add_subdirectory(arch)
 
@@ -14,7 +14,7 @@ add_executable(kernel ${CXX_SOURCES})
 
 target_include_directories(kernel
 PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_compile_definitions(kernel

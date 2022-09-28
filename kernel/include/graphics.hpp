@@ -1,8 +1,8 @@
 #ifndef BREWOS_GRAPHICS_H
 #define BREWOS_GRAPHICS_H
 
-#include "colors.hpp"
-#include "fonts.hpp"
+#include <colors.hpp>
+#include <fonts.hpp>
 #include <stdint.h>
 
 namespace BrewOS::Graphics

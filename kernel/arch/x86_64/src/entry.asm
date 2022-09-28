@@ -1,8 +1,8 @@
-extern _trampoline
-
-global _entry, _kernel_start, _kernel_pages, _memory_map, _graphics_output, _font
-
 bits 64
+
+extern trampoline
+
+global entry, kernel_start, kernel_pages, memory_map, graphics_output, font
 
 p4 equ 0x8000 ; Temporary PML4
 p3 equ 0x9000 ; Temporary PDP
@@ -11,7 +11,7 @@ p1 equ 0xB000 ; Temporary PTI (first of multiple tables; count based on kernel p
 
 section .text
 
-_entry:
+entry:
     cli ; No interrupts
     cld ; Index registers increment
 
@@ -20,11 +20,11 @@ _entry:
     ; Check parameters passed from the UEFI loader before trashing registers
 
     ; Save arguments passed from UEFI
-    mov [_kernel_start], rdi    ; Kernel top physical adress
-    mov [_kernel_pages], rsi    ; Kernel page count
-    mov [_memory_map], rdx      ; Memory map pointer
-    mov [_graphics_output], rcx ; Graphics output pointer
-    mov [_font], r8             ; Font
+    mov [kernel_start], rdi    ; Kernel top physical adress
+    mov [kernel_pages], rsi    ; Kernel page count
+    mov [memory_map], rdx      ; Memory map pointer
+    mov [graphics_output], rcx ; Graphics output pointer
+    mov [font], r8             ; Font
 
     ; Zero out level 4, 3, and 2 page tables
     xor rax, rax
@@ -33,7 +33,7 @@ _entry:
     rep stosq
 
     ; Zero out level 1 page tables
-    mov rcx, [_kernel_pages]
+    mov rcx, [kernel_pages]
     imul rcx, 512
     mov rdi, p1
     rep stosq
@@ -75,9 +75,9 @@ load_page_tables:
     loop .next_p2
 
     ; Page table index (map physical kernel pages to start of -2 GiB)
-    mov rax, [_kernel_start] ; Start at kernel physical top
-    or rax, 0x3              ; Present and writable
-    mov rcx, [_kernel_pages] ; Loop through each kernel page
+    mov rax, [kernel_start] ; Start at kernel physical top
+    or rax, 0x3             ; Present and writable
+    mov rcx, [kernel_pages] ; Loop through each kernel page
     mov rdi, p1
 .next:
     stosq
@@ -89,22 +89,13 @@ load_page_tables:
     mov cr3, rax
 
     ; Jump to higher-half virtual address space
-    lea rax, _trampoline
+    lea rax, trampoline
     jmp rax
 
 section .data
 
-_kernel_start:
-    dq 0
-
-_kernel_pages:
-    dq 0
-
-_memory_map:
-    dq 0
-
-_graphics_output:
-    dq 0
-
-_font:
-    dq 0
+kernel_start:    dq 0
+kernel_pages:    dq 0
+memory_map:      dq 0
+graphics_output: dq 0
+font:            dq 0

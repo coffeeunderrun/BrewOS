@@ -1,16 +1,11 @@
-#include "interrupts.hpp"
-#include "vector.hpp"
+#include <interrupts.hpp>
 #include <registers.hpp>
 #include <stddef.h>
 #include <stdint.h>
+#include <vector.hpp>
+#include <vectors.hpp>
 
-#if ARCH == x86_64
-#define INTERRUPT_VECTOR_MAX 48
-#else
-#define INTERRUPT_VECTOR_MAX 256
-#endif
-
-extern "C" void _init_interrupts();
+extern "C" void init_interrupts();
 
 namespace BrewOS::Interrupts
 {
@@ -20,7 +15,7 @@ namespace BrewOS::Interrupts
 
     void Initialize()
     {
-        _init_interrupts();
+        init_interrupts();
     }
 
     void AddCallback(uint64_t vector, Callback callback)

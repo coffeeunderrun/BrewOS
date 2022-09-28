@@ -1,7 +1,7 @@
-#include "heap.hpp"
-#include "memory.hpp"
+#include <heap.hpp>
+#include <memory.hpp>
 
-#define MAGIC 0xC0FFEE01
+#define MAGIC 0xC0FFEE42
 
 #define ATTR_FREE (1 << 0) // Block is available
 
@@ -11,8 +11,8 @@
 #define IS_FREE(header) (header != nullptr && (header->attribute & ATTR_FREE))
 #define IS_VALID(header) (header != nullptr && (header->signature == MAGIC))
 
-extern void *_heap_start;
-extern void *_heap_end;
+extern void *heap_start;
+extern void *heap_end;
 
 namespace BrewOS::Memory::Heap
 {
@@ -109,7 +109,7 @@ namespace BrewOS::Memory::Heap
 
     static BlockHeader *GetFirstBlock()
     {
-        BlockHeader *header = reinterpret_cast<BlockHeader *>(&_heap_start);
+        BlockHeader *header = reinterpret_cast<BlockHeader *>(&heap_start);
 
         if (header == nullptr)
         {
@@ -121,7 +121,7 @@ namespace BrewOS::Memory::Heap
             return header;
         }
 
-        size_t size = reinterpret_cast<uint8_t *>(&_heap_end) - reinterpret_cast<uint8_t *>(&_heap_start);
+        size_t size = reinterpret_cast<uint8_t *>(&heap_end) - reinterpret_cast<uint8_t *>(&heap_start);
 
         *header = {MAGIC, ATTR_FREE, size - sizeof(BlockHeader), nullptr, nullptr};
 

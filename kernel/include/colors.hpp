@@ -1,5 +1,5 @@
-#ifndef BREWOS_GRAPHICS_COLORS_H
-#define BREWOS_GRAPHICS_COLORS_H
+#ifndef BREWOS_COLORS_H
+#define BREWOS_COLORS_H
 
 #include <stdint.h>
 
@@ -14,4 +14,4 @@ namespace BrewOS::Graphics
     } Color;
 }
 
-#endif // BREWOS_GRAPHICS_COLORS_H
+#endif // BREWOS_COLORS_H
