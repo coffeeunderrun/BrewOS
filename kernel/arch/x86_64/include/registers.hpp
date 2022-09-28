@@ -1,5 +1,5 @@
-#ifndef BREWOS_ARCH_CPU_H
-#define BREWOS_ARCH_CPU_H
+#ifndef BREWOS_ARCH_REGISTERS_H
+#define BREWOS_ARCH_REGISTERS_H
 
 #include <stdint.h>
 
@@ -30,4 +30,4 @@ namespace BrewOS
     } Registers;
 }
 
-#endif // BREWOS_ARCH_CPU_H
+#endif // BREWOS_ARCH_REGISTERS_H

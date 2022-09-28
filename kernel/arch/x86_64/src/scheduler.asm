@@ -1,5 +1,7 @@
 bits 64
 
+global switch_thread
+
 struc Thread
     .rsp: resq 1
     .cr3: resq 1
@@ -7,8 +9,7 @@ endstruc
 
 section .text
 
-global _switch
-_switch:
+switch_thread:
     ; Save "from" thread's registers
     pushfq
     push rbp

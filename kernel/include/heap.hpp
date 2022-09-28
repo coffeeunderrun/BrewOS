@@ -1,5 +1,5 @@
-#ifndef BREWOS_MEMORY_HEAP_H
-#define BREWOS_MEMORY_HEAP_H
+#ifndef BREWOS_HEAP_H
+#define BREWOS_HEAP_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -15,4 +15,4 @@ namespace BrewOS::Memory::Heap
     void Free(void *addr);
 }
 
-#endif // BREWOS_MEMORY_HEAP_H
+#endif // BREWOS_HEAP_H

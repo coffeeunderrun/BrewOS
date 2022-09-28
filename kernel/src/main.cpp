@@ -1,12 +1,12 @@
-#include "interrupts.hpp"
-#include "graphics/graphics.hpp"
-#include "memory/memory.hpp"
-#include "scheduler/process.hpp"
-#include "scheduler/scheduler.hpp"
-#include "scheduler/thread.hpp"
+#include <interrupts.hpp>
+#include <graphics.hpp>
+#include <memory.hpp>
+#include <process.hpp>
+#include <scheduler.hpp>
+#include <thread.hpp>
 
 // TODO: font should be moved to higher-half
-extern const BrewOS::Graphics::PsfFont *_font;
+extern const BrewOS::Graphics::PsfFont *font;
 
 namespace BrewOS
 {
@@ -14,7 +14,7 @@ namespace BrewOS
     {
         while (true)
         {
-            Graphics::DrawText(L"Task 1", 0, 20, Graphics::Color::Green, Graphics::Color::Black, *_font);
+            Graphics::DrawText(L"Task 1", 0, 20, Graphics::Color::Green, Graphics::Color::Black, *font);
             for (uint64_t i = 0; i < 0xFFFFFFF; i++)
                 ;
             Scheduler::Yield();
@@ -25,7 +25,7 @@ namespace BrewOS
     {
         while (true)
         {
-            Graphics::DrawText(L"Task 2", 0, 20, Graphics::Color::Red, Graphics::Color::Black, *_font);
+            Graphics::DrawText(L"Task 2", 0, 20, Graphics::Color::Red, Graphics::Color::Black, *font);
             for (uint64_t i = 0; i < 0xFFFFFFF; i++)
                 ;
             Scheduler::Yield();
@@ -44,7 +44,7 @@ namespace BrewOS
     extern "C" __attribute__((noreturn)) void KernelMain()
     {
         Graphics::ClearScreen(Graphics::Color::Black);
-        Graphics::DrawText(L"Welcome to BrewOS!", 0, 0, Graphics::Color::Green, Graphics::Color::Black, *_font);
+        Graphics::DrawText(L"Welcome to BrewOS!", 0, 0, Graphics::Color::Green, Graphics::Color::Black, *font);
 
         Scheduler::AddProcess(Task1);
         Scheduler::AddProcess(Task2);

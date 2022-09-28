@@ -1,5 +1,5 @@
-#include "process.hpp"
-#include "thread.hpp"
+#include <process.hpp>
+#include <thread.hpp>
 
 namespace BrewOS::Scheduler
 {

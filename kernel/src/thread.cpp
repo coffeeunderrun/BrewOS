@@ -1,5 +1,5 @@
-#include "process.hpp"
-#include "thread.hpp"
+#include <process.hpp>
+#include <thread.hpp>
 
 #if ARCH == x86_64
 #define KERNEL_STACK_SIZE 512

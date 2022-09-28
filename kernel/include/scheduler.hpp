@@ -3,6 +3,8 @@
 
 namespace BrewOS::Scheduler
 {
+    typedef void (*Entry)();
+    
     void Start();
 
     void Yield();

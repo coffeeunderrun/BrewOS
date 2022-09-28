@@ -1,8 +1,8 @@
 #ifndef BREWOS_VECTOR_H
 #define BREWOS_VECTOR_H
 
-#include "memory/heap.hpp"
-#include "memory/memory.hpp"
+#include <heap.hpp>
+#include <memory.hpp>
 #include <stddef.h>
 
 namespace BrewOS

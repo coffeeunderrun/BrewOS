@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.21)
 
 project(arch ASM_NASM CXX)
 
-file(GLOB_RECURSE ASM_SOURCES "${CMAKE_SYSTEM_PROCESSOR}/*.asm")
-file(GLOB_RECURSE CXX_SOURCES "${CMAKE_SYSTEM_PROCESSOR}/*.cpp")
+file(GLOB_RECURSE ASM_SOURCES "${CMAKE_SYSTEM_PROCESSOR}/src/*.asm")
+file(GLOB_RECURSE CXX_SOURCES "${CMAKE_SYSTEM_PROCESSOR}/src/*.cpp")
 
 add_library(arch
 OBJECT
@@ -13,7 +13,7 @@ OBJECT
 
 target_include_directories(arch
 PUBLIC
-    ${CMAKE_SYSTEM_PROCESSOR}
+    ${CMAKE_SYSTEM_PROCESSOR}/include
 )
 
 set_target_properties(arch

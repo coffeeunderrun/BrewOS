@@ -1,7 +1,7 @@
-#include "graphics.hpp"
+#include <graphics.hpp>
 
 /*** DO NOT USE THIS AFTER INITIALIZATION ***/
-extern const BrewOS::Graphics::GraphicsOutput *_graphics_output;
+extern const BrewOS::Graphics::GraphicsOutput *graphics_output;
 
 namespace BrewOS::Graphics
 {
@@ -16,9 +16,9 @@ namespace BrewOS::Graphics
 
     void Initialize()
     {
-        s_mode = _graphics_output->mode;
-        s_frameBuffer = _graphics_output->frameBuffer;
-        s_frameBufferSize = _graphics_output->frameBufferSize;
+        s_mode = graphics_output->mode;
+        s_frameBuffer = graphics_output->frameBuffer;
+        s_frameBufferSize = graphics_output->frameBufferSize;
 
         // TODO: do not assume the pixel width is always 32 bits
         s_pixelWidth = 4;

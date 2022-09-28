@@ -1,5 +1,5 @@
 OUTPUT_FORMAT(elf64-x86-64)
-ENTRY(_entry)
+ENTRY(entry)
 
 VIRTUAL_BASE_ADDRESS = 0xFFFFFFFF80000000;
 
@@ -26,10 +26,10 @@ SECTIONS
 
     .ctors ALIGN(4K) :
     {
-        _ctor_start = .;
+        ctor_start = .;
         *(SORT(.ctors*))
     }
-    _ctor_count = SIZEOF(.ctors) / 8;
+    ctor_count = SIZEOF(.ctors) / 8;
 
     .rodata ALIGN(4K) :
     {
@@ -43,17 +43,17 @@ SECTIONS
 
     .bss ALIGN(4K) :
     {
-        _bss_start = .;
+        bss_start = .;
         *(.bss*)
         *(COMMON)
     }
-    _bss_size = SIZEOF(.bss);
+    bss_size = SIZEOF(.bss);
 
     /* Align for 2 MiB pages */
     . = ALIGN(2M);
-    _heap_start = .;
+    heap_start = .;
     . += 8M;
-    _heap_end = .;
+    heap_end = .;
 
     /DISCARD/ :
     {

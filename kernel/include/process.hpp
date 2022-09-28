@@ -1,8 +1,8 @@
-#ifndef BREWOS_SCHEDULER_PROCESS_H
-#define BREWOS_SCHEDULER_PROCESS_H
+#ifndef BREWOS_PROCESS_H
+#define BREWOS_PROCESS_H
 
-#include "entry.hpp"
 #include <linkedlist.hpp>
+#include <scheduler.hpp>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -56,4 +56,4 @@ namespace BrewOS::Scheduler
     };
 }
 
-#endif // BREWOS_SCHEDULER_PROCESS_H
+#endif // BREWOS_PROCESS_H

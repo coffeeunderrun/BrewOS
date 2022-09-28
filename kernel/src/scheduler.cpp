@@ -1,10 +1,10 @@
-#include "process.hpp"
-#include "scheduler.hpp"
-#include "thread.hpp"
+#include <process.hpp>
+#include <scheduler.hpp>
+#include <thread.hpp>
 
 #define MAX_PRIORITY 3
 
-extern "C" void _switch(BrewOS::Scheduler::Thread *from, BrewOS::Scheduler::Thread *to);
+extern "C" void switch_thread(BrewOS::Scheduler::Thread *from, BrewOS::Scheduler::Thread *to);
 
 namespace BrewOS::Scheduler
 {
@@ -22,7 +22,7 @@ namespace BrewOS::Scheduler
             {
                 s_threadCurrent = thread;
                 thread->SetState(ThreadState::Active);
-                _switch(s_threadKernel, thread);
+                switch_thread(s_threadKernel, thread);
                 thread->SetState(ThreadState::Ready);
             }
         }
@@ -30,7 +30,7 @@ namespace BrewOS::Scheduler
 
     void Yield()
     {
-        _switch(s_threadCurrent, s_threadKernel);
+        switch_thread(s_threadCurrent, s_threadKernel);
     }
 
     void AddProcess(Entry entry)

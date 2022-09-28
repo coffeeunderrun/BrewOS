@@ -1,8 +1,8 @@
-#ifndef BREWOS_SCHEDULER_THREAD_H
-#define BREWOS_SCHEDULER_THREAD_H
+#ifndef BREWOS_THREAD_H
+#define BREWOS_THREAD_H
 
-#include "entry.hpp"
 #include <registers.hpp>
+#include <scheduler.hpp>
 #include <stdint.h>
 
 namespace BrewOS::Scheduler
@@ -58,4 +58,4 @@ namespace BrewOS::Scheduler
     };
 }
 
-#endif // BREWOS_SCHEDULER_THREAD_H
+#endif // BREWOS_THREAD_H

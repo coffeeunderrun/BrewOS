@@ -1,8 +1,8 @@
-extern InterruptHandler, _gdt.pl0_cs_dsc
-
-global _init_interrupts
-
 bits 64
+
+extern InterruptHandler, gdt.kernel_cs
+
+global init_interrupts
 
 PIC1_CTRL_PORT equ 0x20
 PIC1_DATA_PORT equ 0x21
@@ -18,7 +18,7 @@ ICW4           equ 0x1
 
 %macro IDT_INTERRUPT 1-2 0
     mov rax, isr%1           ; Address of ISR
-    mov cx, _gdt.pl0_cs_dsc  ; Segment selector
+    mov cx, gdt.kernel_cs    ; Segment selector
     mov dh, 0x8E             ; Flags
     mov dl, %2               ; IST offset
     mov rdi, idt + (%1 * 16) ; Point to entry in IDT
@@ -27,7 +27,7 @@ ICW4           equ 0x1
 
 %macro IDT_EXCEPTION 1-2 0
     mov rax, isr%1           ; Address of ISR
-    mov cx, _gdt.pl0_cs_dsc  ; Segment selector
+    mov cx, gdt.kernel_cs    ; Segment selector
     mov dh, 0x8F             ; Flags
     mov dl, %2               ; IST offset
     mov rdi, idt + (%1 * 16) ; Point to entry in IDT
@@ -108,7 +108,7 @@ isr%1:
 
 section .text
 
-_init_interrupts:
+init_interrupts:
     ; Initialize programmable interrupt controllers
     mov al, ICW1
     out PIC1_CTRL_PORT, al
@@ -199,7 +199,7 @@ _init_interrupts:
 
     ; Vectors 48 - 255 are unused
 
-    mov rax, qword idt_ptr
+    lea rax, idt_ptr
     lidt [rax]
     sti
     ret
@@ -287,16 +287,13 @@ ISR_HARDWARE 47 ; Secondary hard disk controller
 section .data
 
 align 8
-idt_ptr:
-    dw idt.size ; Limit
-    dq idt      ; Offset
+idt_ptr: dw idt.size ; Limit
+         dq idt      ; Offset
 
-error:
-    dq 0
+error: dq 0
 
 section .bss
 
 align 0x1000
-idt:
-    resb 0x1000
+idt:   resb 0x1000
 .size: equ $ - idt - 1
