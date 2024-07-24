@@ -1,12 +1,8 @@
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-set(CMAKE_C_COMPILER /usr/local/cross/bin/x86_64-elf-gcc)
+set(CMAKE_C_COMPILER x86_64-elf-gcc)
 set(CMAKE_C_FLAGS_DEBUG "-gdwarf-2 -O0")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
-
-set(CMAKE_CXX_COMPILER /usr/local/cross/bin/x86_64-elf-g++)
-set(CMAKE_CXX_FLAGS_DEBUG "-gdwarf-2 -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set(CMAKE_ASM_NASM_OBJECT_FORMAT "elf64")
 set(CMAKE_ASM_NASM_FLAGS_DEBUG "-gdwarf -O0")

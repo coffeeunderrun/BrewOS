@@ -1,19 +1,14 @@
 OUTPUT_FORMAT(elf64-x86-64)
-ENTRY(entry)
+ENTRY(startup_lo)
 
 VIRTUAL_BASE_ADDRESS = 0xFFFFFFFF80000000;
 
 SECTIONS
 {
     /* Lower-half */
-    .entry.text ALIGN(4K) :
+    .startup_lo.text ALIGN(4K) :
     {
-        *entry*(.text*)
-    }
-
-    .entry.data ALIGN(4K) :
-    {
-        *entry*(.data*)
+        *startup_lo*(.text*)
     }
 
     /* Higher-half */
@@ -23,13 +18,6 @@ SECTIONS
     {
         *(.text*)
     }
-
-    .ctors ALIGN(4K) :
-    {
-        ctor_start = .;
-        *(SORT(.ctors*))
-    }
-    ctor_count = SIZEOF(.ctors) / 8;
 
     .rodata ALIGN(4K) :
     {
@@ -49,11 +37,9 @@ SECTIONS
     }
     bss_size = SIZEOF(.bss);
 
-    /* Align for 2 MiB pages */
-    . = ALIGN(2M);
-    heap_start = .;
-    . += 8M;
-    heap_end = .;
+    rx_page_count = ((SIZEOF(.text) + 0xFFF) / 0x1000) + ((SIZEOF(.startup_lo.text) + 0xFFF) / 0x1000);
+    ro_page_count = ((SIZEOF(.rodata) + 0xFFF) / 0x1000);
+    rw_page_count = ((SIZEOF(.data) + 0xFFF) / 0x1000) + ((SIZEOF(.bss) + 0xFFF) / 0x1000);
 
     /DISCARD/ :
     {

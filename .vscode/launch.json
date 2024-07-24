@@ -1,0 +1,73 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Loader",
+            "type": "cppdbg",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/edk2/Build/Boot/DEBUG_GCC5/X64/Loader.debug",
+            "MIMode": "gdb",
+            "miDebuggerPath": "x86_64-elf-gdb",
+            "miDebuggerServerAddress": "127.0.0.1:1234",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true,
+                },
+                {
+                    "text": "add-symbol-file ${workspaceFolder}/edk2/Build/Boot/DEBUG_GCC5/X64/Loader.debug -o ${input:getLoaderImageBase}",
+                },
+            ],
+        },
+        {
+            "name": "Debug Kernel",
+            "type": "cppdbg",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/Build/bin/Kernel",
+            "MIMode": "gdb",
+            "miDebuggerPath": "x86_64-elf-gdb",
+            "miDebuggerServerAddress": "127.0.0.1:1234",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true,
+                },
+                {
+                    "text": "add-symbol-file ${workspaceFolder}/Build/bin/Kernel -o ${input:getKernelImageBase}",
+                },
+            ],
+        },
+    ],
+    "inputs": [
+        {
+            "id": "getLoaderImageBase",
+            "type": "command",
+            "command": "extension.commandvariable.pickStringRemember",
+            "args": {
+                "description": "Loader image base",
+                "fileName": "${workspaceFolder}/Build/debug.log",
+                "options": [],
+                "pattern": {
+                    "regexp": "Loading driver at (.*) EntryPoint.*Loader\\.efi",
+                },
+            },
+        },
+        {
+            "id": "getKernelImageBase",
+            "type": "command",
+            "command": "extension.commandvariable.pickStringRemember",
+            "args": {
+                "description": "Kernel image base",
+                "fileName": "${workspaceFolder}/Build/serial.log",
+                "options": [],
+                "pattern": {
+                    "regexp": "Image Start: (.*)",
+                },
+            },
+        },
+    ]
+}
